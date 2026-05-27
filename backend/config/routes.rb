@@ -1,9 +1,10 @@
 Rails.application.routes.draw do
-  resources :companies
+  namespace :api do
+    namespace :v1 do
+      resources :roles
+      resources :companies
+      resources :groups
+    end
+  end
   devise_for :users
-  resources :groups
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
-
-  # Defines the root path route ("/")
-  # root "articles#index"
 end
