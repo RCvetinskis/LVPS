@@ -14,9 +14,11 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { api } from "@/lib/api-handler";
-type Props = {};
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
-const SignUp = (props: Props) => {
+const SignUp = () => {
+  const router = useRouter();
   const form = useForm<z.infer<typeof signUpSchema>>({
     resolver: zodResolver(signUpSchema),
     defaultValues: {
@@ -39,9 +41,12 @@ const SignUp = (props: Props) => {
         },
       });
 
-      console.log(response);
-    } catch (error) {
-      console.error(error);
+      toast.success(response.data.message);
+      router.push("/auth/signin");
+    } catch (error: any) {
+      const errorMessage = error.message || "Registry Failed";
+
+      toast.error(errorMessage);
     }
   }
   return (
