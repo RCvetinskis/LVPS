@@ -1,5 +1,5 @@
 class User < ApplicationRecord
-  GUEST_ROLE = 'guest'
+  include Devise::JWT::RevocationStrategies::JTIMatcher
   belongs_to :company, optional: true
   belongs_to :role, optional: true
 
@@ -13,7 +13,7 @@ class User < ApplicationRecord
   def set_guest_role
     return if role_id.present?
 
-    guest_role = Role.find_by(name: GUEST_ROLE)
+    guest_role = Role.find_by(name: Role::GUEST_ROLE)
 
     unless guest_role
       Rails.logger.warn("Default role #{guest_role} not found. User #{email} created without role.")

@@ -45,6 +45,7 @@ const SignIn = () => {
         document.cookie = `token=${token}; path=/; max-age=${60 * 60 * 24}; SameSite=Strict`;
 
         api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
         toast.success("Login Successfully");
         router.push("/");
       } else {

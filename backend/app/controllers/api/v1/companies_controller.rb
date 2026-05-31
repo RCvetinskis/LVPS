@@ -1,6 +1,7 @@
 module Api
   module V1
     class CompaniesController < ApplicationController
+      before_action :authenticate_api_v1_user!
       before_action :set_company, only: %i[show update destroy]
 
       # GET /companies
@@ -12,7 +13,12 @@ module Api
 
       # GET /companies/1
       def show
-        render json: @company
+        serialized_item = ActiveModelSerializers::SerializableResource.new(
+          @company,
+          serializer: CompanySerializer
+        ).as_json
+
+        render json: { data: serialized_item }
       end
 
       # POST /companies
@@ -20,7 +26,13 @@ module Api
         @company = Company.new(company_params)
 
         if @company.save
-          render json: @company, status: :created, location: @company
+          result = Services::Companies::AssignCompanyOwner.call(@company, current_api_v1_user)
+
+          if result.success?
+            render json: { data: @company, message: I18n.t('messages.success') }, status: :created
+          else
+            render json: { error: result.error }, status: :unprocessable_entity
+          end
         else
           render json: @company.errors, status: :unprocessable_entity
         end
