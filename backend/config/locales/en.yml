@@ -30,4 +30,10 @@
 # available at https://guides.rubyonrails.org/i18n.html.
 
 en:
-  hello: "Hello world"
+  time:
+    formats:
+      default: "%Y/%m/%d"
+  messages:
+    success: "Successfully saved"
+    error: "Failed to save"
+    not_found: "Item not found"
