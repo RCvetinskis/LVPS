@@ -10,37 +10,44 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { authenticatedApi } from "@/lib/api-handler";
 import { companySchema } from "@/schemas/company-schema";
+import { TCompany } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
 
-const CompanyForm = () => {
+type Props = {
+  company?: TCompany;
+};
+const CompanyForm = ({ company }: Props) => {
   const [loading, setLoading] = useState(false);
   const form = useForm<z.infer<typeof companySchema>>({
     resolver: zodResolver(companySchema),
     defaultValues: {
-      name: "",
-      location: "",
-      description: undefined,
+      name: company?.name ?? "",
+      location: company?.location ?? "",
+      description: company?.description ?? undefined,
     },
   });
 
   async function onSubmit(data: z.infer<typeof companySchema>) {
     try {
       setLoading(true);
-      const response = await authenticatedApi.post("/companies", {
+      const body = {
         company: {
           name: data.name,
           location: data.location,
           description: data.description,
         },
-      });
+      };
+      const response = company
+        ? await authenticatedApi.put(`/companies/${company.id}`, body)
+        : await authenticatedApi.post("/companies", body);
 
       toast.success(response.data.message);
     } catch (error: any) {
-      const errorMessage = error.message || "Login Failed";
+      const errorMessage = error.message;
 
       toast.error(errorMessage);
     } finally {

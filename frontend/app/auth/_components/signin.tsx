@@ -1,6 +1,5 @@
 "use client";
 import { Input } from "@/components/ui/input";
-
 import { signInSchema } from "@/schemas/auth-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
@@ -15,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { api } from "@/lib/api-handler";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import Cookies from "js-cookie";
 
 const SignIn = () => {
   const router = useRouter();
@@ -42,9 +42,11 @@ const SignIn = () => {
         if (response.data.data.user) {
           localStorage.setItem("user", JSON.stringify(response.data.data.user));
         }
-        document.cookie = `token=${token}; path=/; max-age=${60 * 60 * 24}; SameSite=Strict`;
 
-        api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+        Cookies.set("token", token, {
+          expires: 1,
+          sameSite: "lax",
+        });
 
         toast.success("Login Successfully");
         router.push("/");

@@ -1,6 +1,7 @@
 class User < ApplicationRecord
   include Devise::JWT::RevocationStrategies::JTIMatcher
-  belongs_to :company, optional: true
+  has_many :user_companies
+  has_many :companies, through: :user_companies
   belongs_to :role, optional: true
 
   devise :database_authenticatable, :registerable, :recoverable, :validatable, :jwt_authenticatable,

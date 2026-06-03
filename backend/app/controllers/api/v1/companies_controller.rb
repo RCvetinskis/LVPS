@@ -4,11 +4,18 @@ module Api
       before_action :authenticate_api_v1_user!
       before_action :set_company, only: %i[show update destroy]
 
-      # GET /companies
-      def index
-        @companies = Company.all
+      def current_user_companies
+        companies = current_api_v1_user.companies
+                                       .order(created_at: :desc)
+                                       .page(params[:page])
+                                       .per(per_page)
 
-        render json: @companies
+        serialized_companies = ActiveModelSerializers::SerializableResource.new(
+          companies,
+          each_serializer: CompanySerializer
+        ).as_json
+
+        render json: { data: serialized_companies, meta: pagination_dict(companies) }
       end
 
       # GET /companies/1
@@ -34,16 +41,16 @@ module Api
             render json: { error: result.error }, status: :unprocessable_entity
           end
         else
-          render json: @company.errors, status: :unprocessable_entity
+          render json: { error: @company.errors }, status: :unprocessable_entity
         end
       end
 
       # PATCH/PUT /companies/1
       def update
         if @company.update(company_params)
-          render json: @company
+          render json: { data: @company, message: I18n.t('messages.success') }
         else
-          render json: @company.errors, status: :unprocessable_entity
+          render json: { error: @company.errors }, status: :unprocessable_entity
         end
       end
 

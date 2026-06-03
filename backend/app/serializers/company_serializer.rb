@@ -4,8 +4,4 @@ class CompanySerializer < ActiveModel::Serializer
   def created_at
     I18n.l(object.created_at, format: :default)
   end
-
-  def company_owner
-    object.users.find_by
-  end
 end

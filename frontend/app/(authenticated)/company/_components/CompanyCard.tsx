@@ -1,3 +1,4 @@
+"use client";
 import { TCompany } from "@/types";
 import {
   Card,
@@ -10,13 +11,19 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Edit } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 type Props = {
   company: TCompany;
 };
 
 const CompanyCard = ({ company }: Props) => {
-  console.log(company);
+  const router = useRouter();
+
+  const toggleEdit = () => {
+    router.push(`/company/${company.id}/edit`);
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -26,7 +33,7 @@ const CompanyCard = ({ company }: Props) => {
         )}
 
         <CardAction>
-          <Button size={"icon"} variant={"outline"}>
+          <Button onClick={toggleEdit} size={"icon"} variant={"outline"}>
             <Edit />
           </Button>
         </CardAction>
@@ -42,9 +49,6 @@ const CompanyCard = ({ company }: Props) => {
           <span>{company.created_at}</span>
         </div>
       </CardContent>
-      <CardFooter>
-        <p>Card Footer</p>
-      </CardFooter>
     </Card>
   );
 };
