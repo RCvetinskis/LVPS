@@ -19,6 +19,42 @@ class ApplicationController < ActionController::API
     [value, max].min
   end
 
+  def render_success(data = nil, message = 'Success', status = :ok)
+    response = { error: false, message: message }
+    response[:data] = data if data
+    render json: response, status: status
+  end
+
+  def render_error(message = 'Error', status = :unprocessable_entity)
+    render json: { error: true, message: message }, status: status
+  end
+
+  def render_created(data = nil, message = 'Created successfully')
+    render_success(data, message, :created)
+  end
+
+  def render_updated(data = nil, message = 'Updated successfully')
+    render_success(data, message, :ok)
+  end
+
+  def render_deleted(message = 'Deleted successfully')
+    render_success(nil, message, :ok)
+  end
+
+  def serialize_collection(collection, serializer)
+    ActiveModelSerializers::SerializableResource.new(
+      collection,
+      each_serializer: serializer
+    ).as_json
+  end
+
+  def serialize_resource(resource, serializer)
+    ActiveModelSerializers::SerializableResource.new(
+      resource,
+      serializer: serializer
+    ).as_json
+  end
+
   protected
 
   def configure_permitted_parameters

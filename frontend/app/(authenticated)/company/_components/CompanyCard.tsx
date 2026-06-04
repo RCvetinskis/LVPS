@@ -5,7 +5,6 @@ import {
   CardAction,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -20,12 +19,16 @@ type Props = {
 const CompanyCard = ({ company }: Props) => {
   const router = useRouter();
 
-  const toggleEdit = () => {
+  const toggleEdit = (e: React.MouseEvent) => {
+    e.stopPropagation();
     router.push(`/company/${company.id}/edit`);
   };
 
+  const navigateToCompany = () => {
+    router.push(`/company/${company.id}`);
+  };
   return (
-    <Card>
+    <Card onClick={navigateToCompany}>
       <CardHeader>
         <CardTitle>{company.name}</CardTitle>
         {company.description && (

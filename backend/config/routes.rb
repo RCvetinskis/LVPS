@@ -9,13 +9,20 @@ Rails.application.routes.draw do
                    sessions: 'api/v1/users/sessions'
                  }
 
+      namespace :users do
+        resources :invitations, only: [:create]
+      end
+
       resources :roles
+
       resources :companies do
         collection do
           get :current_user_companies
         end
+        member do
+          get :company_employees
+        end
       end
-      resources :groups
     end
   end
 end

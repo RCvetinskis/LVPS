@@ -16,3 +16,11 @@ export type TMeta = {
   total_count: number;
   total_pages: number;
 };
+
+export type TEmployee = {
+  id: number;
+  email: string;
+  name: string;
+  surname: string;
+  role: string;
+} & TCrudDate;

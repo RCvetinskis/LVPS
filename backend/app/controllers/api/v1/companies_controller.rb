@@ -2,30 +2,11 @@ module Api
   module V1
     class CompaniesController < ApplicationController
       before_action :authenticate_api_v1_user!
-      before_action :set_company, only: %i[show update destroy]
-
-      def current_user_companies
-        companies = current_api_v1_user.companies
-                                       .order(created_at: :desc)
-                                       .page(params[:page])
-                                       .per(per_page)
-
-        serialized_companies = ActiveModelSerializers::SerializableResource.new(
-          companies,
-          each_serializer: CompanySerializer
-        ).as_json
-
-        render json: { data: serialized_companies, meta: pagination_dict(companies) }
-      end
+      before_action :set_company, only: %i[show update destroy company_employees]
 
       # GET /companies/1
       def show
-        serialized_item = ActiveModelSerializers::SerializableResource.new(
-          @company,
-          serializer: CompanySerializer
-        ).as_json
-
-        render json: { data: serialized_item }
+        render json: { data: serialize_resource(@company, CompanySerializer) }
       end
 
       # POST /companies
@@ -33,15 +14,19 @@ module Api
         @company = Company.new(company_params)
 
         if @company.save
-          result = Services::Companies::AssignCompanyOwner.call(@company, current_api_v1_user)
+          result = Services::Companies::AssignUserRoleAndCompany.call(@company.id, current_api_v1_user, Role::COMPANY_OWNER_ROLE)
 
           if result.success?
-            render json: { data: @company, message: I18n.t('messages.success') }, status: :created
+            render_created(
+              @company,
+              message: I18n.t('messages.success')
+            )
           else
-            render json: { error: result.error }, status: :unprocessable_entity
+            render_error(result.error)
           end
         else
-          render json: { error: @company.errors }, status: :unprocessable_entity
+          render_error(@company.errors)
+
         end
       end
 
@@ -57,6 +42,19 @@ module Api
       # DELETE /companies/1
       def destroy
         @company.destroy
+      end
+
+      def current_user_companies
+        companies = current_api_v1_user.companies
+                                       .order(created_at: :desc)
+                                       .page(params[:page])
+                                       .per(per_page)
+
+        render json: { data: serialize_collection(companies, CompanySerializer), meta: pagination_dict(companies) }
+      end
+
+      def company_employees
+        render_success(serialize_collection(@company.users, UserSerializer))
       end
 
       private

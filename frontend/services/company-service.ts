@@ -1,6 +1,6 @@
 import { LIMIT } from "@/lib/constants";
 import { getServerApiClient } from "@/lib/server-side-api-handler";
-import { TCompany, TMeta } from "@/types";
+import { TCompany, TEmployee, TMeta } from "@/types";
 type CurrentUserCompaniesResponse = {
   data: TCompany[];
   meta: TMeta;
@@ -37,5 +37,17 @@ export const currentUserCompanies = async (
         total_pages: 0,
       },
     };
+  }
+};
+
+export const getCompanyEmployees = async (
+  id: string,
+): Promise<TEmployee[] | []> => {
+  try {
+    const apiClient = await getServerApiClient();
+    const { data } = await apiClient.get(`companies/${id}/company_employees`);
+    return data.data;
+  } catch (error) {
+    return [];
   }
 };
