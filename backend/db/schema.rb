@@ -10,13 +10,34 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 20_260_603_141_648) do
+ActiveRecord::Schema[7.0].define(version: 20_260_611_145_258) do
   create_table 'companies', force: :cascade do |t|
     t.string 'name', null: false
     t.string 'location', null: false
     t.text 'description'
     t.datetime 'created_at', null: false
     t.datetime 'updated_at', null: false
+  end
+
+  create_table 'permissions', force: :cascade do |t|
+    t.string 'name', null: false
+    t.string 'resource_type'
+    t.string 'action', null: false
+    t.text 'description'
+    t.datetime 'created_at', null: false
+    t.datetime 'updated_at', null: false
+    t.index ['name'], name: 'index_permissions_on_name', unique: true
+    t.index %w[resource_type action], name: 'index_permissions_on_resource_type_and_action'
+  end
+
+  create_table 'role_permissions', force: :cascade do |t|
+    t.integer 'role_id', null: false
+    t.integer 'permission_id', null: false
+    t.datetime 'created_at', null: false
+    t.datetime 'updated_at', null: false
+    t.index ['permission_id'], name: 'index_role_permissions_on_permission_id'
+    t.index %w[role_id permission_id], name: 'index_role_permissions_on_role_id_and_permission_id', unique: true
+    t.index ['role_id'], name: 'index_role_permissions_on_role_id'
   end
 
   create_table 'roles', force: :cascade do |t|
@@ -49,12 +70,18 @@ ActiveRecord::Schema[7.0].define(version: 20_260_603_141_648) do
     t.date 'birth_date'
     t.integer 'role_id'
     t.string 'jti', null: false
+    t.string 'status', default: 'pending'
+    t.string 'invitation_token'
+    t.datetime 'invitation_sent_at'
     t.index ['email'], name: 'index_users_on_email', unique: true
+    t.index ['invitation_token'], name: 'index_users_on_invitation_token', unique: true
     t.index ['jti'], name: 'index_users_on_jti', unique: true
     t.index ['reset_password_token'], name: 'index_users_on_reset_password_token', unique: true
     t.index ['role_id'], name: 'index_users_on_role_id'
   end
 
+  add_foreign_key 'role_permissions', 'permissions'
+  add_foreign_key 'role_permissions', 'roles'
   add_foreign_key 'user_companies', 'companies'
   add_foreign_key 'user_companies', 'users'
   add_foreign_key 'users', 'roles'

@@ -21,9 +21,10 @@ type Props = {
   children: React.ReactNode;
   title: string;
   description: string;
+  email?: string;
 };
 
-const AuthCard = ({ children, title, description }: Props) => {
+const AuthCard = ({ children, title, description, email }: Props) => {
   const router = useRouter();
   const pathname = usePathname();
 
@@ -38,11 +39,13 @@ const AuthCard = ({ children, title, description }: Props) => {
       <CardHeader>
         <CardTitle>{title}</CardTitle>
         <CardDescription>{description}</CardDescription>
-        <CardAction>
-          <Button variant="link" onClick={toggleAuthType}>
-            {mappedType[next]}
-          </Button>
-        </CardAction>
+        {!email && (
+          <CardAction>
+            <Button variant="link" onClick={toggleAuthType}>
+              {mappedType[next]}
+            </Button>
+          </CardAction>
+        )}
       </CardHeader>
       <CardContent>{children}</CardContent>
     </Card>

@@ -1,4 +1,5 @@
-import { TEmployee } from "@/types";
+"use client";
+import { TUser } from "@/types";
 import {
   Card,
   CardAction,
@@ -9,14 +10,14 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { EditIcon } from "lucide-react";
+import { useCompanyStore } from "@/stores/company-store";
 
 type Props = {
-  employee: TEmployee;
+  employee: TUser;
 };
 
 const EmployeeCard = ({ employee }: Props) => {
-  // TODO: at translation to roles in en.yml and send translated values
-  //   TODO: Display if user confirmed invitation
+  const { permissions } = useCompanyStore();
 
   return (
     <Card>
@@ -25,11 +26,13 @@ const EmployeeCard = ({ employee }: Props) => {
           {employee.name} {employee.surname}
         </CardTitle>
         <CardDescription>{employee.surname}</CardDescription>
-        <CardAction>
-          <Button variant="outline" size="icon">
-            <EditIcon />
-          </Button>
-        </CardAction>
+        {permissions?.manage_company_users && (
+          <CardAction>
+            <Button variant="outline" size="icon">
+              <EditIcon />
+            </Button>
+          </CardAction>
+        )}
       </CardHeader>
       <CardContent>
         <div className="space-x-1">
@@ -40,6 +43,11 @@ const EmployeeCard = ({ employee }: Props) => {
         <div className="space-x-1">
           <span className="font-semibold">Role:</span>
           <span>{employee.role}</span>
+        </div>
+
+        <div className="space-x-1">
+          <span className="font-semibold">Status:</span>
+          <span>{employee.status}</span>
         </div>
       </CardContent>
     </Card>

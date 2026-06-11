@@ -32,6 +32,8 @@ module Api
 
       # PATCH/PUT /companies/1
       def update
+        return unless authorize!('update_company', @company.id)
+
         if @company.update(company_params)
           render json: { data: @company, message: I18n.t('messages.success') }
         else
@@ -41,6 +43,8 @@ module Api
 
       # DELETE /companies/1
       def destroy
+        return unless authorize!('delete_company', @company.id)
+
         @company.destroy
       end
 
@@ -59,12 +63,10 @@ module Api
 
       private
 
-      # Use callbacks to share common setup or constraints between actions.
       def set_company
-        @company = Company.find(params[:id])
+        @company = UserCompany.find_by(company_id: params[:id], user_id: current_api_v1_user.id).company
       end
 
-      # Only allow a list of trusted parameters through.
       def company_params
         params.require(:company).permit(:name, :location, :description)
       end

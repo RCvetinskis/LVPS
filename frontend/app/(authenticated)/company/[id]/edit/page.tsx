@@ -18,7 +18,7 @@ const CompanyEditPage = async (props: Props) => {
   }
   return (
     <div className="space-y-2">
-      <CompanyForm company={company} />
+      <CompanyForm />
       <DeleteCompany id={company.id} />
     </div>
   );

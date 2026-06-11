@@ -1,6 +1,6 @@
 import { LIMIT } from "@/lib/constants";
 import { getServerApiClient } from "@/lib/server-side-api-handler";
-import { TCompany, TEmployee, TMeta } from "@/types";
+import { TCompany, TUser, TMeta, TCompanyPermissions } from "@/types";
 type CurrentUserCompaniesResponse = {
   data: TCompany[];
   meta: TMeta;
@@ -9,6 +9,18 @@ export const getCompanyById = async (id: string): Promise<TCompany | null> => {
   try {
     const apiClient = await getServerApiClient();
     const { data } = await apiClient.get(`companies/${id}`);
+    return data.data;
+  } catch (error) {
+    return null;
+  }
+};
+
+export const getCompanyPermissions = async (
+  id: string,
+): Promise<TCompanyPermissions | null> => {
+  try {
+    const apiClient = await getServerApiClient();
+    const { data } = await apiClient.get(`permissions/company/${id}`);
     return data.data;
   } catch (error) {
     return null;
@@ -42,7 +54,7 @@ export const currentUserCompanies = async (
 
 export const getCompanyEmployees = async (
   id: string,
-): Promise<TEmployee[] | []> => {
+): Promise<TUser[] | []> => {
   try {
     const apiClient = await getServerApiClient();
     const { data } = await apiClient.get(`companies/${id}/company_employees`);

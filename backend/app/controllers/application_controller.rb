@@ -55,6 +55,14 @@ class ApplicationController < ActionController::API
     ).as_json
   end
 
+  def authorize!(permission_name, resource_id = nil)
+    unless current_api_v1_user.can?(permission_name, resource_id)
+      render_error('You are not authorized to perform this action', 403)
+      return false
+    end
+    true
+  end
+
   protected
 
   def configure_permitted_parameters

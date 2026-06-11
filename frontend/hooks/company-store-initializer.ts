@@ -1,23 +1,27 @@
 "use client";
 
 import { useCompanyStore } from "@/stores/company-store";
-import { TCompany } from "@/types";
+import { TCompany, TCompanyPermissions } from "@/types";
 import { useEffect, useRef } from "react";
 
 type Props = {
   company: TCompany;
+  permissions: TCompanyPermissions;
 };
 
-const CompanyStoreInitializer = ({ company }: Props) => {
+const CompanyStoreInitializer = ({ company, permissions }: Props) => {
   const initialized = useRef(false);
-  const setCompany = useCompanyStore((state) => state.setCompany);
+  const { setCompany, setPermissions, setLoading } = useCompanyStore();
 
   useEffect(() => {
     if (!initialized.current) {
+      setLoading(true);
       setCompany(company);
+      setPermissions(permissions);
       initialized.current = true;
+      setLoading(false);
     }
-  }, [company, setCompany]);
+  }, [company, permissions, setCompany, setPermissions, setLoading]);
 
   return null;
 };

@@ -19,7 +19,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const CompanySidebar = () => {
-  const { company } = useCompanyStore();
+  const { company, permissions } = useCompanyStore();
+
   const pathname = usePathname();
   if (!company) return null;
 
@@ -39,10 +40,12 @@ const CompanySidebar = () => {
           {
             title: "Employees",
             url: `${companyBaseUrl}/employees`,
+            permission: permissions?.view,
           },
           {
             title: "Add Employee",
             url: `${companyBaseUrl}/employees/add`,
+            permission: permissions?.manage_company_users,
           },
         ],
       },
@@ -79,16 +82,19 @@ const CompanySidebar = () => {
                 </SidebarMenuButton>
                 {item.items?.length ? (
                   <SidebarMenuSub>
-                    {item.items.map((item) => (
-                      <SidebarMenuSubItem key={item.title}>
-                        <SidebarMenuSubButton
-                          asChild
-                          isActive={isActive(item.url)}
-                        >
-                          <Link href={item.url}>{item.title}</Link>
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
-                    ))}
+                    {item.items.map(
+                      (item) =>
+                        item.permission && (
+                          <SidebarMenuSubItem key={item.title}>
+                            <SidebarMenuSubButton
+                              asChild
+                              isActive={isActive(item.url)}
+                            >
+                              <Link href={item.url}>{item.title}</Link>
+                            </SidebarMenuSubButton>
+                          </SidebarMenuSubItem>
+                        ),
+                    )}
                   </SidebarMenuSub>
                 ) : null}
               </SidebarMenuItem>

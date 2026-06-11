@@ -1,4 +1,5 @@
 "use client";
+import LoadingSpinner from "@/components/loading-spinner";
 import { Button } from "@/components/ui/button";
 import {
   Field,
@@ -10,17 +11,15 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { authenticatedApi } from "@/lib/api-handler";
 import { companySchema } from "@/schemas/company-schema";
-import { TCompany } from "@/types";
+import { useCompanyStore } from "@/stores/company-store";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
 
-type Props = {
-  company?: TCompany;
-};
-const CompanyForm = ({ company }: Props) => {
+const CompanyForm = () => {
+  const { company, isLoading, permissions } = useCompanyStore();
   const [loading, setLoading] = useState(false);
   const form = useForm<z.infer<typeof companySchema>>({
     resolver: zodResolver(companySchema),
@@ -30,6 +29,18 @@ const CompanyForm = ({ company }: Props) => {
       description: company?.description ?? undefined,
     },
   });
+
+  useEffect(() => {
+    if (company && !isLoading) {
+      form.reset({
+        name: company.name ?? "",
+        location: company.location ?? "",
+        description: company.description ?? undefined,
+      });
+    }
+  }, [company, isLoading, form]);
+
+  if (isLoading) return <LoadingSpinner />;
 
   async function onSubmit(data: z.infer<typeof companySchema>) {
     try {
@@ -54,6 +65,10 @@ const CompanyForm = ({ company }: Props) => {
       setLoading(false);
     }
   }
+
+  const canEdit =
+    permissions === undefined ? true : permissions.update === true;
+
   return (
     <form onSubmit={form.handleSubmit(onSubmit)}>
       <div className="space-y-3">
@@ -71,6 +86,7 @@ const CompanyForm = ({ company }: Props) => {
                   type="text"
                   placeholder="UAB EXAMPLE"
                   required
+                  disabled={!canEdit}
                 />
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />
@@ -92,6 +108,7 @@ const CompanyForm = ({ company }: Props) => {
                   type="text"
                   placeholder="Vilnius, kestucio 22"
                   required
+                  disabled={!canEdit}
                 />
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />
@@ -112,6 +129,7 @@ const CompanyForm = ({ company }: Props) => {
                   id="description"
                   placeholder="Electronics company"
                   className="resize-none"
+                  disabled={!canEdit}
                 />
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />
@@ -120,7 +138,11 @@ const CompanyForm = ({ company }: Props) => {
             )}
           />
 
-          <Button disabled={loading} type="submit" className="w-full">
+          <Button
+            disabled={loading || !canEdit}
+            type="submit"
+            className="w-full"
+          >
             Create
           </Button>
         </FieldGroup>

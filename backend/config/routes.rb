@@ -1,4 +1,4 @@
-# config/routes.rb
+
 Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
@@ -10,7 +10,11 @@ Rails.application.routes.draw do
                  }
 
       namespace :users do
-        resources :invitations, only: [:create]
+        resources :invitations, only: %i[create show] do
+          member do
+            patch :set_password
+          end
+        end
       end
 
       resources :roles
@@ -21,6 +25,11 @@ Rails.application.routes.draw do
         end
         member do
           get :company_employees
+        end
+      end
+
+      namespace :permissions do
+        resources :company, only: [:show], param: :company_id do
         end
       end
     end

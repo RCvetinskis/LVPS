@@ -27,3 +27,10 @@ export const signInSchema = z.object({
     .min(6, "Password must be at least 6 characters")
     .max(100, "Password is too long"),
 });
+
+export const acceptInvitationSchema = z.object({
+  password: z
+    .string()
+    .min(6, "Password must be at least 6 characters")
+    .max(100, "Password is too long"),
+});
