@@ -16,3 +16,21 @@ export type TMeta = {
   total_count: number;
   total_pages: number;
 };
+
+export type TUser = {
+  id: number;
+  email: string;
+  name: string;
+  surname: string;
+  role: string;
+  status: string;
+  invitation_token?: string;
+} & TCrudDate;
+
+export type TCompanyPermissions = {
+  view: boolean;
+  update: boolean;
+  create: boolean;
+  delete: boolean;
+  manage_company_users: boolean;
+};

@@ -30,12 +30,38 @@ export const authenticatedApi = axios.create({
   timeout: 10000,
 });
 
-authenticatedApi.interceptors.request.use((config) => {
-  const token = Cookies.get("token");
+authenticatedApi.interceptors.request.use(
+  (config) => {
+    const token = Cookies.get("token");
 
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
 
-  return config;
-});
+    return config;
+  },
+  (error) => {
+    const message =
+      error?.response?.data?.message ||
+      error?.response?.data?.error?.message ||
+      error.message ||
+      "Unknown error";
+
+    return Promise.reject(new Error(message));
+  },
+);
+
+authenticatedApi.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    const message =
+      error?.response?.data?.message ||
+      error?.response?.data?.error?.message ||
+      error.message ||
+      "Unknown error";
+
+    return Promise.reject(new Error(message));
+  },
+);

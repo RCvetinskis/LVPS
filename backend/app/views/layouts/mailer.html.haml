@@ -1,0 +1,12 @@
+%html
+  %body
+    .email-wrapper
+      %header
+        %h1{ style: "font-size:24px;color:#111;margin:0;font-weight:bold;" } Hello from LVPS
+
+      .content
+        = yield
+
+      %footer{ style: "margin-top:20px;padding-top:10px;border-top:1px solid #ddd;font-size:12px;color:#666;" }
+        %p © LVPS
+        %p{ style: "margin:0;" }= I18n.l(Time.current, format: :default)

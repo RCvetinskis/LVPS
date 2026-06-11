@@ -1,4 +1,4 @@
-# config/routes.rb
+
 Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
@@ -9,13 +9,29 @@ Rails.application.routes.draw do
                    sessions: 'api/v1/users/sessions'
                  }
 
+      namespace :users do
+        resources :invitations, only: %i[create show] do
+          member do
+            patch :set_password
+          end
+        end
+      end
+
       resources :roles
+
       resources :companies do
         collection do
           get :current_user_companies
         end
+        member do
+          get :company_employees
+        end
       end
-      resources :groups
+
+      namespace :permissions do
+        resources :company, only: [:show], param: :company_id do
+        end
+      end
     end
   end
 end

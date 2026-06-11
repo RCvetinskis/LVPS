@@ -2,6 +2,7 @@
 import AlertConfirmation from "@/components/alert-confirmation";
 import { Button } from "@/components/ui/button";
 import { authenticatedApi } from "@/lib/api-handler";
+import { useCompanyStore } from "@/stores/company-store";
 import { toast } from "sonner";
 
 type Props = {
@@ -9,6 +10,8 @@ type Props = {
 };
 
 const DeleteCompany = ({ id }: Props) => {
+  const { permissions } = useCompanyStore();
+  console.log(permissions);
   const handleDelete = async () => {
     try {
       await authenticatedApi.delete(`/companies/${id}`);
@@ -25,7 +28,9 @@ const DeleteCompany = ({ id }: Props) => {
             account from our servers."
       handleConfirmation={handleDelete}
     >
-      <Button variant="outline">Delete Company</Button>
+      <Button disabled={!permissions?.delete} variant="outline">
+        Delete Company
+      </Button>
     </AlertConfirmation>
   );
 };
