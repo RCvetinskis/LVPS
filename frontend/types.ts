@@ -34,3 +34,16 @@ export type TCompanyPermissions = {
   delete: boolean;
   manage_company_users: boolean;
 };
+
+export type TSchedule = {
+  id: number;
+  company_id: number;
+  start_time: string;
+  end_time: string;
+  work_date: string;
+  user_data: {
+    name: string;
+    surname: string;
+    id: number;
+  };
+} & TCrudDate;

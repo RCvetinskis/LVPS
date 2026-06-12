@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  company: one
+  user: one
+  day_of_week: 1
+  start_time: 2026-06-12 15:02:29
+  end_time: 2026-06-12 15:02:29
+
+two:
+  company: two
+  user: two
+  day_of_week: 1
+  start_time: 2026-06-12 15:02:29
+  end_time: 2026-06-12 15:02:29

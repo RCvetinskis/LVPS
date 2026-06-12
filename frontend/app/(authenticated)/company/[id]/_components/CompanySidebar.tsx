@@ -14,7 +14,11 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { useCompanyStore } from "@/stores/company-store";
-import { GalleryVerticalEnd, PersonStanding } from "lucide-react";
+import {
+  CalendarRange,
+  GalleryVerticalEnd,
+  PersonStanding,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -49,6 +53,12 @@ const CompanySidebar = () => {
           },
         ],
       },
+      {
+        title: "Schedule",
+        url: `${companyBaseUrl}/schedule`,
+        icon: <CalendarRange />,
+        permission: permissions?.view,
+      },
     ],
   };
 
@@ -75,11 +85,13 @@ const CompanySidebar = () => {
           <SidebarMenu>
             {data.navMain.map((item) => (
               <SidebarMenuItem key={item.title}>
-                <SidebarMenuButton asChild>
-                  <Link href={item.url} className="font-medium">
-                    {item.title}
-                  </Link>
-                </SidebarMenuButton>
+                {item.permission && (
+                  <SidebarMenuButton asChild>
+                    <Link href={item.url} className="font-medium">
+                      {item.title}
+                    </Link>
+                  </SidebarMenuButton>
+                )}
                 {item.items?.length ? (
                   <SidebarMenuSub>
                     {item.items.map(
