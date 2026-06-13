@@ -1,34 +1,50 @@
 "use client";
 import { DataTable } from "@/components/table/data-table";
 import {
-  scheduleColumns,
-  TTableSchedule,
+  baseColumns,
+  getDayColumns,
 } from "@/components/table/schedule-columns";
-import { useScheduleStore } from "@/stores/schedule-store";
-import { useUserStore } from "@/stores/user-store";
-import { TSchedule, TUser } from "@/types";
+import { useSchedulePageData } from "@/hooks/use-schedule-data";
 import { format, eachDayOfInterval } from "date-fns";
-import { useEffect } from "react";
+import { useMemo } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useDateRangeStore } from "@/stores/date-range-store";
 
 type Props = {
-  users: TUser[];
-  schedules?: TSchedule[];
+  companyId: string;
 };
-// TODO: useQuery
-const TableContainer = ({ users, schedules = [] }: Props) => {
-  const { dateRange } = useScheduleStore();
-  const { setUsers } = useUserStore();
+// TODO: add nodes, status display, and edit mode
+const TableContainer = ({ companyId }: Props) => {
+  const { dateRange } = useDateRangeStore();
+  const { schedules, users, isLoading, isError, error, refetch } =
+    useSchedulePageData(companyId);
 
-  useEffect(() => {
-    setUsers(users);
-  }, []);
+  const tableData = useMemo(() => {
+    if (!users.length) return [];
 
-  const scheduleMap = new Map();
-  schedules.forEach((schedule) => {
-    scheduleMap.set(schedule.work_date, schedule);
-  });
+    return users.map((user) => {
+      const row: any = {
+        user: {
+          id: user.id,
+          fullName: `${user.name} ${user.surname}`,
+        },
+      };
 
-  const getDatesArray = (): TTableSchedule[] => {
+      schedules
+        .filter((s) => s.user_data.id === user.id)
+        .forEach((schedule) => {
+          row[schedule.work_date] = {
+            start: schedule.start_time,
+            end: schedule.end_time,
+            hoursWorked: schedule.hours_worked,
+          };
+        });
+
+      return row;
+    });
+  }, [users, schedules]);
+
+  const datesArray = useMemo(() => {
     if (!dateRange?.from) return [];
 
     const dates = eachDayOfInterval({
@@ -36,31 +52,39 @@ const TableContainer = ({ users, schedules = [] }: Props) => {
       end: dateRange.to || dateRange.from,
     });
 
-    return dates.map((date) => {
-      const dateKey = format(date, "yyyy-MM-dd");
-      const schedule = scheduleMap.get(dateKey);
+    return dates.map((date) => ({
+      day: format(date, "EEEE, MMMM dd, yyyy"),
+      originalDay: date,
+    }));
+  }, [dateRange]);
 
-      return {
-        id: schedule?.id,
-        day: format(date, "EEEE, MMMM dd, yyyy"),
-        originalDate: date,
-        userId: schedule?.user_data?.id || "Not assigned",
-        startTime: schedule?.start_time
-          ? format(new Date(schedule.start_time), "HH:mm")
-          : undefined,
-        endTime: schedule?.end_time
-          ? format(new Date(schedule.end_time), "HH:mm")
-          : undefined,
-        status: schedule?.status || "unscheduled",
-      };
-    });
-  };
+  const columns = useMemo(
+    () => [
+      ...baseColumns(datesArray),
+      ...getDayColumns(datesArray, companyId, refetch),
+    ],
+    [datesArray, companyId, refetch],
+  );
+  if (isLoading) {
+    return (
+      <div className="space-y-4">
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-96 w-full" />
+      </div>
+    );
+  }
 
-  const tableData = getDatesArray();
+  if (isError) {
+    return (
+      <div className="text-center text-red-500 p-4">
+        Error loading schedule data: {error?.message}
+      </div>
+    );
+  }
 
   return (
-    <div>
-      <DataTable columns={scheduleColumns} data={tableData} />
+    <div className="space-y-4">
+      <DataTable columns={columns} data={tableData} />
     </div>
   );
 };

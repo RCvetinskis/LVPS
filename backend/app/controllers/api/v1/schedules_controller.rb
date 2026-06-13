@@ -21,7 +21,7 @@ module Api
         @schedule = Schedule.new(schedule_params)
 
         if @schedule.save
-          render_success(@schedule)
+          render_success(serialize_resource(@schedule, ScheduleSerializer))
         else
           render_error(@schedule.errors.full_messages.first, :unprocessable_entity)
         end

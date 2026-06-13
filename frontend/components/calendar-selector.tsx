@@ -1,16 +1,14 @@
 "use client";
-
-import { addDays } from "date-fns";
-import { type DateRange } from "react-day-picker";
 import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent } from "@/components/ui/card";
-import { useState } from "react";
-import { useScheduleStore } from "@/stores/schedule-store";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { useDateRangeStore } from "@/stores/date-range-store";
 
 type Props = {};
 
 const CalendarSelector = (props: Props) => {
-  const { dateRange, setDateRange } = useScheduleStore();
+  const { dateRange, setDateRange } = useDateRangeStore();
+  const isMobile = useIsMobile();
   return (
     <Card className="mx-auto w-fit p-0">
       <CardContent className="p-0">
@@ -19,10 +17,7 @@ const CalendarSelector = (props: Props) => {
           defaultMonth={dateRange?.from}
           selected={dateRange}
           onSelect={setDateRange}
-          numberOfMonths={2}
-          disabled={(date) =>
-            date > new Date() || date < new Date("1900-01-01")
-          }
+          numberOfMonths={isMobile ? 1 : 3}
         />
       </CardContent>
     </Card>

@@ -3,7 +3,7 @@ class Schedule < ApplicationRecord
   belongs_to :user
 
   STATUSES = %w[scheduled completed absent sick vacation holiday late].freeze
-
+  HOURS_CALCULABLE_STATUSES = %w[scheduled completed].freeze
   validates :work_date, presence: true
   validates :start_time, presence: true
   validates :end_time, presence: true
@@ -34,12 +34,16 @@ class Schedule < ApplicationRecord
   end
 
   def calculate_hours_worked
-    return unless status == 'completed'
+    return unless HOURS_CALCULABLE_STATUSES.include?(status)
     return if work_date.blank? || start_time.blank? || end_time.blank?
 
-    start = start_time
-    finish = end_time
-    self.hours_worked = ((finish - start) * 24.0).round(2)
+    start_dt = start_time.is_a?(String) ? Time.zone.parse(start_time) : start_time
+    end_dt = end_time.is_a?(String) ? Time.zone.parse(end_time) : end_time
+
+    diff_seconds = (end_dt - start_dt).to_f
+    diff_hours = (diff_seconds / 3600.0).round(2)
+
+    self.hours_worked = diff_hours
   end
 
   def combine_date_and_time

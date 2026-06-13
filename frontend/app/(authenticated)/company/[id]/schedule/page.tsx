@@ -1,8 +1,6 @@
 import CalendarSelector from "@/components/calendar-selector";
-
 import TableContainer from "./_components/table-container";
-import { getCompanySchedules } from "@/services/schedule-service";
-import { getCompanyEmployees } from "@/services/company-service";
+import { QueryProvider } from "@/app/providers/query-provider";
 
 type Props = {
   params: Promise<{
@@ -12,16 +10,17 @@ type Props = {
 
 const SchedulePage = async (props: Props) => {
   const params = await props.params;
-  const data = await getCompanySchedules(params.id);
-  const users = await getCompanyEmployees(params.id);
-  return (
-    <div className="space-y-4">
-      <header>
-        <CalendarSelector />
-      </header>
 
-      <TableContainer schedules={data} users={users} />
-    </div>
+  return (
+    <QueryProvider>
+      <div className="space-y-4">
+        <header>
+          <CalendarSelector />
+        </header>
+
+        <TableContainer companyId={params.id} />
+      </div>
+    </QueryProvider>
   );
 };
 

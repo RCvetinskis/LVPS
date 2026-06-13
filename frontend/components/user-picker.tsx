@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/command";
 import { useState, useEffect } from "react";
 import { Input } from "./ui/input";
-import { useScheduleStore } from "@/stores/schedule-store";
+import { useScheduleStore } from "@/stores/date-range-store";
 import { useUserStore } from "@/stores/user-store";
 
 type Props = {

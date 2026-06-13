@@ -11,8 +11,7 @@ module Backend
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.0
     config.autoload_paths << Rails.root.join('app/services')
-    config.time_zone = 'Vilnius'
-    config.active_record.default_timezone = :utc
+    config.active_record.default_timezone = :local
     # Configuration for the application, engines, and railties goes here.
     #
     # These settings can be overridden in specific environments using the files
