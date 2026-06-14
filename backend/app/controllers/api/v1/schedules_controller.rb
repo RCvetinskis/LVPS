@@ -30,15 +30,20 @@ module Api
       # PATCH/PUT /schedules/1
       def update
         if @schedule.update(schedule_params)
-          render json: @schedule
+          render_success(serialize_resource(@schedule, ScheduleSerializer))
         else
-          render json: @schedule.errors, status: :unprocessable_entity
+          render_error(@schedule.errors.full_messages.first, :unprocessable_entity)
         end
       end
 
       # DELETE /schedules/1
       def destroy
-        @schedule.destroy
+        if @schedule.destroy
+          render_deleted
+
+        else
+          render_error(@schedule.errors.full_messages.first, :unprocessable_entity)
+        end
       end
 
       private
@@ -54,7 +59,7 @@ module Api
 
       # Only allow a list of trusted parameters through.
       def schedule_params
-        params.require(:schedule).permit(:company_id, :user_id, :work_date, :start_time, :end_time)
+        params.require(:schedule).permit(:company_id, :user_id, :work_date, :start_time, :end_time, :notes)
       end
     end
   end

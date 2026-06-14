@@ -1,7 +1,10 @@
 "use client";
 import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
-import { CreateSchedule } from "@/app/(authenticated)/company/[id]/schedule/_components/create-schedule";
+import { UpsertSchedule } from "@/app/(authenticated)/company/[id]/schedule/_components/upsert-schedule";
+import ToolTipHover from "../tool-tip-hover";
+import { Button } from "../ui/button";
+import { Plus } from "lucide-react";
 
 export type TTableSchedule = {
   id: number;
@@ -24,7 +27,9 @@ type TTableRow = {
 type TShift = {
   start: string;
   end: string;
+  scheduleId: number;
   hoursWorked?: number;
+  notes?: string;
   id?: number;
 };
 
@@ -114,25 +119,48 @@ export const getDayColumns = (
 
         if (!shift) {
           return (
-            <CreateSchedule
-              companyId={companyId}
-              user={row.original.user}
-              selectedDate={date.originalDay}
-              onSuccess={refetch}
-            />
+            <ToolTipHover text="Add shift">
+              <div className="flex items-center justify-center">
+                <UpsertSchedule
+                  companyId={companyId}
+                  user={row.original.user}
+                  selectedDate={date.originalDay}
+                  onSuccess={refetch}
+                >
+                  <Button className="cursor-pointer" size={"icon-xs"}>
+                    <Plus />
+                  </Button>
+                </UpsertSchedule>
+              </div>
+            </ToolTipHover>
           );
         }
 
         return (
-          <div className="text-center text-xs space-y-1">
-            <div>{shift.start}</div>
-            <div>{shift.end}</div>
-            {shift.hoursWorked && (
-              <div className="border-t pt-1 text-gray-600">
-                {shift.hoursWorked}h
-              </div>
-            )}
-          </div>
+          <ToolTipHover text="Edit shift hours">
+            <div className="flex items-center justify-center">
+              <UpsertSchedule
+                companyId={companyId}
+                user={row.original.user}
+                selectedDate={date.originalDay}
+                onSuccess={refetch}
+                scheduleId={shift.scheduleId}
+                initialStartTime={shift.start}
+                initialEndTime={shift.end}
+                initialNotes={shift.notes}
+              >
+                <div className="text-center space-y-1 cursor-pointer">
+                  <div>{shift.start}</div>
+                  <div>{shift.end}</div>
+                  {shift.hoursWorked && (
+                    <div className="border-t pt-1 text-gray-600">
+                      {shift.hoursWorked}h
+                    </div>
+                  )}
+                </div>
+              </UpsertSchedule>
+            </div>
+          </ToolTipHover>
         );
       },
     };

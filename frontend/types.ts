@@ -42,6 +42,7 @@ export type TSchedule = {
   end_time: string;
   work_date: string;
   hours_worked?: number;
+  notes?: string;
   user_data: {
     name: string;
     surname: string;

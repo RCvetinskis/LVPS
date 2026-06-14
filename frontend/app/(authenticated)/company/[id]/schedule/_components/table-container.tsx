@@ -13,7 +13,7 @@ import { useDateRangeStore } from "@/stores/date-range-store";
 type Props = {
   companyId: string;
 };
-// TODO: add nodes, status display, and edit mode
+
 const TableContainer = ({ companyId }: Props) => {
   const { dateRange } = useDateRangeStore();
   const { schedules, users, isLoading, isError, error, refetch } =
@@ -37,6 +37,8 @@ const TableContainer = ({ companyId }: Props) => {
             start: schedule.start_time,
             end: schedule.end_time,
             hoursWorked: schedule.hours_worked,
+            scheduleId: schedule.id,
+            notes: schedule.notes,
           };
         });
 

@@ -14,7 +14,6 @@ export const getCompanySchedules = async (id: string): Promise<TSchedule[]> => {
 };
 
 export const createSchedule = async (body: any): Promise<TSchedule | null> => {
-  console.log(body);
   try {
     const { data } = await authenticatedApi.post("schedules", {
       schedule: {
@@ -23,12 +22,55 @@ export const createSchedule = async (body: any): Promise<TSchedule | null> => {
         work_date: body.work_date,
         start_time: body.start_time,
         end_time: body.end_time,
+        notes: body.notes,
       },
     });
 
     toast.success(
       `Created schedule for ${data.data.user_data.name} at ${data.data.work_date}`,
     );
+    return data.data;
+  } catch (error: any) {
+    toast.error(error.message || "Something went wrong");
+    return null;
+  }
+};
+export const updateSchedule = async ({
+  id,
+  body,
+}: {
+  id: number;
+  body: any;
+}): Promise<TSchedule | null> => {
+  try {
+    const { data } = await authenticatedApi.patch(`schedules/${id}`, {
+      schedule: {
+        company_id: body.company_id,
+        user_id: body.user_id,
+        work_date: body.work_date,
+        start_time: body.start_time,
+        end_time: body.end_time,
+        notes: body.notes,
+      },
+    });
+
+    toast.success(
+      `Update schedule for ${data.data.user_data.name} at ${data.data.work_date}`,
+    );
+    return data.data;
+  } catch (error: any) {
+    toast.error(error.message || "Something went wrong");
+    return null;
+  }
+};
+
+export const destroySchedule = async (
+  id: number,
+): Promise<TSchedule | null> => {
+  try {
+    const { data } = await authenticatedApi.delete(`schedules/${id}`);
+
+    toast.success("Schedule deleted succesfully");
     return data.data;
   } catch (error: any) {
     toast.error(error.message || "Something went wrong");

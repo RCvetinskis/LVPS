@@ -15,6 +15,7 @@ import { api } from "@/lib/api-handler";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import Cookies from "js-cookie";
+import { useState } from "react";
 
 const SignIn = () => {
   const router = useRouter();
@@ -26,8 +27,11 @@ const SignIn = () => {
     },
   });
 
+  const [loading, setLoading] = useState(false);
+
   async function onSubmit(data: z.infer<typeof signInSchema>) {
     try {
+      setLoading(true);
       const response = await api.post("/users/sign_in", {
         user: {
           email: data.email,
@@ -57,6 +61,8 @@ const SignIn = () => {
       const errorMessage = error.message || "Login Failed";
 
       toast.error(errorMessage);
+    } finally {
+      setLoading(false);
     }
   }
   return (
@@ -104,7 +110,7 @@ const SignIn = () => {
             )}
           />
 
-          <Button type="submit" className="w-full">
+          <Button disabled={loading} type="submit" className="w-full">
             Login
           </Button>
         </FieldGroup>

@@ -1,5 +1,5 @@
 class ScheduleSerializer < ActiveModel::Serializer
-  attributes :id, :work_date, :start_time, :end_time, :user_data, :status, :company_id, :hours_worked
+  attributes :id, :work_date, :start_time, :end_time, :user_data, :status, :company_id, :hours_worked, :notes
 
   def user_data
     {

@@ -2,7 +2,9 @@ import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 
 import {
   createSchedule,
+  destroySchedule,
   getCompanySchedules,
+  updateSchedule,
 } from "@/front-requests/schedule-requests";
 import { getCompanyEmployees } from "@/front-requests/company-requests";
 
@@ -47,9 +49,33 @@ export const useCreateSchedule = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: any) => createSchedule(data),
+    mutationFn: (body: any) => createSchedule(body),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["schedule-data"] });
+    },
+  });
+};
+
+export const useUpdateSchedule = (id: number) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (body: any) => updateSchedule({ id, body }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["schedule-data"] });
+      queryClient.invalidateQueries({ queryKey: ["schedule", id] });
+    },
+  });
+};
+
+export const useDestroySchedule = (id: number) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: number) => destroySchedule(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["schedule-data"] });
+      queryClient.invalidateQueries({ queryKey: ["schedule", id] });
     },
   });
 };
