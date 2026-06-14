@@ -1,5 +1,5 @@
-
 Rails.application.routes.draw do
+  resources :schedules
   namespace :api do
     namespace :v1 do
       devise_for :users,
@@ -18,6 +18,12 @@ Rails.application.routes.draw do
       end
 
       resources :roles
+
+      resources :schedules do
+        collection do
+          get :company_schedules
+        end
+      end
 
       resources :companies do
         collection do

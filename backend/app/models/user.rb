@@ -7,6 +7,7 @@ class User < ApplicationRecord
   include Devise::JWT::RevocationStrategies::JTIMatcher
   has_many :user_companies
   has_many :companies, through: :user_companies
+  has_many :schedules, dependent: :destroy
   belongs_to :role, optional: true
   attr_accessor :skip_password_validation
 
