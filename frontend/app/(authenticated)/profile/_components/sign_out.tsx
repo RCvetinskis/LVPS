@@ -1,22 +1,28 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { api } from "@/lib/api-handler";
 import { useRouter } from "next/navigation";
-import Cookies from "js-cookie";
+import { useCurrentUserStore } from "@/stores/user-store";
+import { useTranslations } from "next-intl";
 type Props = {};
 
 const SignOut = (props: Props) => {
   const router = useRouter();
-
+  const { logout } = useCurrentUserStore();
+  const t = useTranslations("UserActions");
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    Cookies.remove("token");
-    delete api.defaults.headers.common["Authorization"];
-
+    logout();
     router.push("/auth/signin");
   };
-  return <Button onClick={handleLogout}>Sign Out</Button>;
+  return (
+    <Button
+      className="w-full"
+      variant={"ghost"}
+      size={"sm"}
+      onClick={handleLogout}
+    >
+      {t("signOut")}
+    </Button>
+  );
 };
 
 export default SignOut;

@@ -1,3 +1,4 @@
+import NavBar from "@/components/navbar/nav-bar";
 import React from "react";
 
 type Props = {
@@ -5,7 +6,12 @@ type Props = {
 };
 
 const GlobalLayout = ({ children }: Props) => {
-  return <div className="max-w-450 w-full mx-auto p-1 md:p-2">{children}</div>;
+  return (
+    <div>
+      <NavBar />
+      <div className="max-w-450 w-full mx-auto p-1 md:p-2">{children}</div>
+    </div>
+  );
 };
 
 export default GlobalLayout;

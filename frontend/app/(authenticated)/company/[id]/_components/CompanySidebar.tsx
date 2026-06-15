@@ -19,12 +19,13 @@ import {
   GalleryVerticalEnd,
   PersonStanding,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const CompanySidebar = () => {
   const { company, permissions } = useCompanyStore();
-
+  const t = useTranslations("CompanySideBar");
   const pathname = usePathname();
   if (!company) return null;
 
@@ -37,24 +38,24 @@ const CompanySidebar = () => {
   const data = {
     navMain: [
       {
-        title: "Manage Staff",
+        title: t("manageStaff"),
         url: "#",
         icon: <PersonStanding />,
         items: [
           {
-            title: "Employees",
+            title: t("employees"),
             url: `${companyBaseUrl}/employees`,
             permission: permissions?.view,
           },
           {
-            title: "Add Employee",
+            title: t("addEmployee"),
             url: `${companyBaseUrl}/employees/add`,
             permission: permissions?.manage_company_users,
           },
         ],
       },
       {
-        title: "Schedule",
+        title: t("schedule"),
         url: `${companyBaseUrl}/schedule`,
         icon: <CalendarRange />,
         permission: permissions?.view,
@@ -63,7 +64,7 @@ const CompanySidebar = () => {
   };
 
   return (
-    <Sidebar>
+    <Sidebar className="pt-8">
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>

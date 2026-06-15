@@ -1,0 +1,71 @@
+{
+    "Company": {
+        "myCompanies": "My Companies",
+        "noCompaniesFound": "No companies found",
+        "location": "Location",
+        "managingSince": "Managing since"
+    },
+    "Navigation": {
+        "language": "Language",
+        "companies": "Companies",
+        "profile": "Profile",
+        "myCompanies": "My Companies"
+    },
+    "UserActions": {
+        "signOut": "Sign Out"
+    },
+    "CompanySideBar": {
+        "manageStaff": "Manage Staff",
+        "employees": "Employees",
+        "addEmployee": "Add Employee",
+        "schedule": "Schedule"
+    },
+    "Schedule": {
+        "employee": "Employee",
+        "totalHours": "Total Hours",
+        "addShift": "Add shift",
+        "editShift": "Edit shift",
+        "hours": "hours",
+        "date": "Date",
+        "note": "Note",
+        "notePlaceholder": "Leave a note",
+        "startTime": "Start Time",
+        "endTime": "End Time",
+        "createTitle": "Create Schedule",
+        "editTitle": "Edit Schedule",
+        "loading": "Loading...",
+        "deleteSchedule": "Delete Schedule",
+        "deleteConfirmationTitle": "Are you absolutely sure?",
+        "deleteConfirmationDescription": "This action cannot be undone.",
+        "scheduleNotFound": "Schedule not found",
+        "createButton": "Create Schedule",
+        "updateButton": "Update Schedule"
+    },
+    "Employee": {
+        "title": "Add new employee",
+        "description": "User will receive email and after confirmation he can access your company.",
+        "email": "Email",
+        "name": "Name",
+        "surname": "Surname",
+        "inviteButton": "Invite",
+        "emailPlaceholder": "m@example.com",
+        "namePlaceholder": "John",
+        "surnamePlaceholder": "Doe",
+        "inviteSuccess": "Invitation sent successfully",
+        "inviteFailed": "Invitation Failed",
+        "addedToSystemAt": "Added to system at:",
+        "role": "Role:",
+        "status": "Status:",
+        "editButton": "Edit employee"
+    },
+    "Export": {
+        "noSchedules": "No schedules available to export",
+        "noDateRange": "Please select a date range first",
+        "exportSuccess": "Export completed successfully",
+        "exportFailed": "Failed to export schedules",
+        "loadingSchedules": "Loading schedules...",
+        "errorLoading": "Error loading schedules",
+        "exporting": "Exporting...",
+        "export": "Export"
+    }
+}

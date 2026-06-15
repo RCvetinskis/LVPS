@@ -1,18 +1,33 @@
 import { authenticatedApi } from "@/lib/api-handler";
 import { TSchedule } from "@/types";
+import { format } from "date-fns";
+
 import { toast } from "sonner";
 
-export const getCompanySchedules = async (id: string): Promise<TSchedule[]> => {
+export const getCompanySchedules = async (
+  id: string,
+  dateRange?: { from?: Date; to?: Date },
+): Promise<TSchedule[]> => {
   try {
-    const { data } = await authenticatedApi.get(
-      `schedules/company_schedules?company_id=${id}`,
-    );
+    const { data } = await authenticatedApi.get("schedules/company_schedules", {
+      params: {
+        company_id: id,
+        from: dateRange?.from,
+        to: dateRange?.to,
+      },
+      paramsSerializer: (params) => {
+        const filteredParams = Object.fromEntries(
+          Object.entries(params).filter(([_, value]) => value !== undefined),
+        );
+        return new URLSearchParams(filteredParams).toString();
+      },
+    });
     return data.data;
-  } catch (error) {
+  } catch (error: any) {
+    toast.error(error.message || "Something went wrong");
     return [];
   }
 };
-
 export const createSchedule = async (body: any): Promise<TSchedule | null> => {
   try {
     const { data } = await authenticatedApi.post("schedules", {
@@ -26,9 +41,7 @@ export const createSchedule = async (body: any): Promise<TSchedule | null> => {
       },
     });
 
-    toast.success(
-      `Created schedule for ${data.data.user_data.name} at ${data.data.work_date}`,
-    );
+    toast.success(data.message);
     return data.data;
   } catch (error: any) {
     toast.error(error.message || "Something went wrong");
@@ -54,9 +67,7 @@ export const updateSchedule = async ({
       },
     });
 
-    toast.success(
-      `Update schedule for ${data.data.user_data.name} at ${data.data.work_date}`,
-    );
+    toast.success(data.message);
     return data.data;
   } catch (error: any) {
     toast.error(error.message || "Something went wrong");
@@ -70,8 +81,40 @@ export const destroySchedule = async (
   try {
     const { data } = await authenticatedApi.delete(`schedules/${id}`);
 
-    toast.success("Schedule deleted succesfully");
+    toast.success(data.message);
     return data.data;
+  } catch (error: any) {
+    toast.error(error.message || "Something went wrong");
+    return null;
+  }
+};
+
+export const exportScheduleXlsx = async ({
+  schedule_ids,
+  companyId,
+  dateRange,
+}: {
+  schedule_ids: number[];
+  companyId: string;
+  dateRange: { from: Date; to: Date };
+}) => {
+  try {
+    const response = await authenticatedApi.post(
+      "schedules/export_to_xlsx",
+      {
+        company_id: companyId,
+        schedule_ids,
+        date_range: {
+          from: format(dateRange.from, "yyyy-MM-dd"),
+          to: format(dateRange.to, "yyyy-MM-dd"),
+        },
+      },
+      {
+        responseType: "blob",
+      },
+    );
+
+    return response.data;
   } catch (error: any) {
     toast.error(error.message || "Something went wrong");
     return null;

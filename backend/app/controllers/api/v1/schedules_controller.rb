@@ -2,11 +2,15 @@ module Api
   module V1
     class SchedulesController < ApplicationController
       before_action :set_schedule, only: %i[show update destroy]
-      before_action :set_company, only: %i[company_schedules]
+      before_action :set_company, only: %i[company_schedules export_to_xlsx]
 
       # GET /schedules
       def company_schedules
         schedules = @company.schedules
+        from_date = params[:from]
+        to_date = params[:to]
+
+        schedules = schedules.by_range_date(from_date, to_date) if from_date.present? && to_date.present?
 
         render_success(serialize_collection(schedules, ScheduleSerializer))
       end
@@ -21,7 +25,8 @@ module Api
         @schedule = Schedule.new(schedule_params)
 
         if @schedule.save
-          render_success(serialize_resource(@schedule, ScheduleSerializer))
+          render_success(serialize_resource(@schedule, ScheduleSerializer),
+                         create_update_message('schedules.create_success'))
         else
           render_error(@schedule.errors.full_messages.first, :unprocessable_entity)
         end
@@ -30,7 +35,9 @@ module Api
       # PATCH/PUT /schedules/1
       def update
         if @schedule.update(schedule_params)
-          render_success(serialize_resource(@schedule, ScheduleSerializer))
+
+          render_success(serialize_resource(@schedule, ScheduleSerializer),
+                         create_update_message('schedules.update_success'))
         else
           render_error(@schedule.errors.full_messages.first, :unprocessable_entity)
         end
@@ -44,6 +51,24 @@ module Api
         else
           render_error(@schedule.errors.full_messages.first, :unprocessable_entity)
         end
+      end
+
+      def export_to_xlsx
+        schedule_ids = params[:schedule_ids] || []
+        date_range = params[:date_range]
+
+        xlsx_data = Services::Schedules::ExportScheduleToXlsx.call(
+          @company,
+          schedule_ids,
+          date_range,
+          I18n.locale
+        )
+
+        send_data(
+          xlsx_data,
+          filename: 'schedule.xlsx',
+          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
       end
 
       private
@@ -60,6 +85,14 @@ module Api
       # Only allow a list of trusted parameters through.
       def schedule_params
         params.require(:schedule).permit(:company_id, :user_id, :work_date, :start_time, :end_time, :notes)
+      end
+
+      def create_update_message(translation_name)
+        I18n.t(
+          translation_name,
+          user_name: @schedule.user&.name,
+          work_date: @schedule.work_date
+        )
       end
     end
   end

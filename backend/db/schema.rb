@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_06_12_194414) do
+ActiveRecord::Schema[7.0].define(version: 2026_06_14_212042) do
   create_table "companies", force: :cascade do |t|
     t.string "name", null: false
     t.string "location", null: false
@@ -92,6 +92,7 @@ ActiveRecord::Schema[7.0].define(version: 2026_06_12_194414) do
     t.string "status", default: "pending"
     t.string "invitation_token"
     t.datetime "invitation_sent_at"
+    t.string "locale", default: "en"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["invitation_token"], name: "index_users_on_invitation_token", unique: true
     t.index ["jti"], name: "index_users_on_jti", unique: true

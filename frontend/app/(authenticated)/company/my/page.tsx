@@ -1,6 +1,7 @@
 import { currentUserCompanies } from "@/services/company-service";
 import CompanyCard from "../_components/CompanyCard";
 import Paginator from "@/components/Paginator";
+import { getTranslations } from "next-intl/server";
 
 type Props = {
   searchParams: Promise<{
@@ -10,14 +11,14 @@ type Props = {
 
 const CurrentUserCompanies = async ({ searchParams }: Props) => {
   const currentPage = Number((await searchParams).page) || 1;
-
+  const t = await getTranslations("Company");
   const { data, meta } = await currentUserCompanies(currentPage);
 
   if (!data.length) return <div>No companies found</div>;
 
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl"> My Companies</h1>
+      <h1 className="text-2xl">{t("myCompanies")}</h1>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 ">
         {data.map((company) => (
           <CompanyCard key={company.id} company={company} />

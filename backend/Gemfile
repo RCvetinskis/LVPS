@@ -48,6 +48,8 @@ group :development do
 end
 
 gem 'active_model_serializers'
+gem 'caxlsx'
+gem 'csv'
 gem 'devise'
 gem 'devise-jwt'
 gem 'faker'

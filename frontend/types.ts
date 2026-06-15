@@ -24,6 +24,7 @@ export type TUser = {
   surname: string;
   role: string;
   status: string;
+  locale: string;
   invitation_token?: string;
 } & TCrudDate;
 

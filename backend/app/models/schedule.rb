@@ -17,6 +17,7 @@ class Schedule < ApplicationRecord
   scope :past, -> { where('work_date < ?', Date.today) }
   scope :completed, -> { where(status: 'completed') }
   scope :by_date, ->(date) { where(work_date: date) }
+  scope :by_range_date, ->(from_date, to_date) { where(work_date: from_date..to_date) }
   scope :for_user, ->(user_id) { where(user_id: user_id) }
 
   before_validation :combine_date_and_time

@@ -33,8 +33,87 @@ en:
   time:
     formats:
       default: "%Y/%m/%d"
+      short: "%H:%M"
+      long: "%B %d, %Y at %H:%M"
+  date:
+    formats:
+      default: "%Y/%m/%d"
+      short: "%m/%d"
+      long: "%B %d, %Y"
+    month_names:
+      [
+        ~,
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+      ]
+    day_names:
+      [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+      ]
+    abbr_day_names: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
   messages:
     success: "Successfully saved"
     error: "Failed to save"
     not_found: "Item not found"
     user_not_found: "Current user not found"
+    confirm: "Are you sure you want to continue?"
+    cancel: "Cancel"
+    save: "Save"
+    delete: "Delete"
+    edit: "Edit"
+    view: "View"
+  activerecord:
+    attributes:
+      user:
+        statuses:
+          pending: "Pending"
+          active: "Active"
+          disabled: "Disabled"
+    errors:
+      models:
+        user:
+          attributes:
+            email:
+              blank: "can't be blank"
+              invalid: "is invalid"
+              taken: "has already been taken"
+      messages:
+        record_invalid: "Validation failed: %{errors}"
+        restrict_dependent_destroy:
+          has_one: "Cannot delete record because a dependent %{record} exists"
+          has_many: "Cannot delete record because dependent %{record} exist"
+  export:
+    work_schedule_title: "WORK SCHEDULE"
+    schedule_sheet_name: "Schedule"
+    daily_totals: "Daily totals"
+    unknown: "Unknown"
+    headers:
+      id: "No."
+      employee: "Employee"
+      position: "Position"
+      total_days: "Total Days"
+      total_hours: "Total Hours"
+  schedules:
+    update_success: "Update schedule for %{user_name} at %{work_date}"
+    create_success: "Schedule created for %{user_name} at %{work_date}"
+    destroy_success: "Schedule deleted for %{user_name} at %{work_date}"
+  user:
+    sign_up_success: "Registration successful! Welcome aboard!"
+    invitations:
+      sent: "Invitation sent to %{email}"

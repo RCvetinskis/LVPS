@@ -12,6 +12,10 @@ module Backend
     config.load_defaults 7.0
     config.autoload_paths << Rails.root.join('app/services')
     config.active_record.default_timezone = :local
+    config.i18n.default_locale = :en
+    config.i18n.default_locale = :lt
+    config.i18n.available_locales = %i[en lt]
+    config.i18n.fallbacks = true
     # Configuration for the application, engines, and railties goes here.
     #
     # These settings can be overridden in specific environments using the files

@@ -1,7 +1,21 @@
 class ApplicationController < ActionController::API
   before_action :configure_permitted_parameters, if: :devise_controller?
+  before_action :set_locale
 
   private
+
+  def set_locale
+    locale = if current_api_v1_user&.locale.present?
+               current_api_v1_user.locale
+
+             else
+               I18n.default_locale
+             end
+
+    locale = I18n.default_locale unless I18n.available_locales.include?(locale.to_sym)
+
+    I18n.locale = locale
+  end
 
   def pagination_dict(collection)
     {
@@ -9,7 +23,6 @@ class ApplicationController < ActionController::API
       total_pages: collection.total_pages,
       total_count: collection.total_count,
       per_page: collection.limit_value
-
     }
   end
 
@@ -19,26 +32,44 @@ class ApplicationController < ActionController::API
     [value, max].min
   end
 
-  def render_success(data = nil, message = 'Success', status = :ok)
-    response = { error: false, message: message }
+  def render_success(data = nil, message = nil, status = :ok)
+    response = {
+      error: false,
+      message: message || I18n.t('messages.success')
+    }
     response[:data] = data if data
     render json: response, status: status
   end
 
-  def render_error(message = 'Error', status = :unprocessable_entity)
-    render json: { error: true, message: message }, status: status
+  def render_error(message = nil, status = :unprocessable_entity)
+    render json: {
+      error: true,
+      message: message || I18n.t('messages.error')
+    }, status: status
   end
 
-  def render_created(data = nil, message = 'Created successfully')
-    render_success(data, message, :created)
+  def render_created(data = nil, message = nil)
+    render_success(data, message || I18n.t('messages.success'), :created)
   end
 
-  def render_updated(data = nil, message = 'Updated successfully')
-    render_success(data, message, :ok)
+  def render_updated(data = nil, message = nil)
+    render_success(data, message || I18n.t('messages.success'), :ok)
   end
 
-  def render_deleted(message = 'Deleted successfully')
-    render_success(nil, message, :ok)
+  def render_deleted(message = nil)
+    render_success(nil, message || I18n.t('messages.success'), :ok)
+  end
+
+  def render_not_found(message = nil)
+    render_error(message || I18n.t('messages.not_found'), :not_found)
+  end
+
+  def render_unauthorized(message = nil)
+    render_error(message || 'Unauthorized', :unauthorized)
+  end
+
+  def render_forbidden(message = nil)
+    render_error(message || 'Forbidden', :forbidden)
   end
 
   def serialize_collection(collection, serializer)
@@ -57,7 +88,7 @@ class ApplicationController < ActionController::API
 
   def authorize!(permission_name, resource_id = nil)
     unless current_api_v1_user.can?(permission_name, resource_id)
-      render_error('You are not authorized to perform this action', 403)
+      render_error(I18n.t('messages.unauthorized'), 403)
       return false
     end
     true
@@ -68,7 +99,7 @@ class ApplicationController < ActionController::API
   def configure_permitted_parameters
     devise_parameter_sanitizer.permit(
       :sign_up,
-      keys: %i[name surname]
+      keys: %i[name surname locale]
     )
   end
 end

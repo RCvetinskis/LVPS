@@ -23,20 +23,20 @@ module Api
                 UserMailer.invitation_mail(company, @user).deliver_now
                 render_success(
                   serialize_resource(@user, UserSerializer),
-                  "Invitation sent to #{@user.email}"
+                  I18n.t('user.invitations.sent', @user.email)
                 )
               else
                 render_error(result.error)
               end
             else
-              render_error(@user.errors.full_messages.to_sentence)
+              render_error(@user.errors.full_messages.first)
             end
           end
         end
 
         def show
           if @token_user
-            render_success(serialize_resource(@token_user, UserSerializer), 'User found')
+            render_success(serialize_resource(@token_user, UserSerializer), I18n.t('messages.user_not_found'))
 
           else
             render_error('user not found', 404)
@@ -48,7 +48,7 @@ module Api
           @token_user.status = :active
 
           if @token_user.save
-            render_success(nil, 'Succesffuly set password')
+            render_success(nil, I18n.t('success'))
           else
 
             render_error
