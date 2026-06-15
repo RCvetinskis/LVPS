@@ -15,6 +15,8 @@ Rails.application.routes.draw do
             patch :set_password
           end
         end
+
+        resource :locales, only: [:update]
       end
 
       resources :roles
@@ -22,6 +24,7 @@ Rails.application.routes.draw do
       resources :schedules do
         collection do
           get :company_schedules
+          post :export_to_xlsx
         end
       end
 

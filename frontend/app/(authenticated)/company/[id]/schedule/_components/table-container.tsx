@@ -9,6 +9,8 @@ import { format, eachDayOfInterval } from "date-fns";
 import { useMemo } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useDateRangeStore } from "@/stores/date-range-store";
+import { useCurrentUserStore } from "@/stores/user-store";
+import { useTranslations } from "next-intl";
 
 type Props = {
   companyId: string;
@@ -17,8 +19,9 @@ type Props = {
 const TableContainer = ({ companyId }: Props) => {
   const { dateRange } = useDateRangeStore();
   const { schedules, users, isLoading, isError, error, refetch } =
-    useSchedulePageData(companyId);
-
+    useSchedulePageData(companyId, dateRange);
+  const { locale } = useCurrentUserStore();
+  const t = useTranslations("Schedule");
   const tableData = useMemo(() => {
     if (!users.length) return [];
 
@@ -62,8 +65,8 @@ const TableContainer = ({ companyId }: Props) => {
 
   const columns = useMemo(
     () => [
-      ...baseColumns(datesArray),
-      ...getDayColumns(datesArray, companyId, refetch),
+      ...baseColumns(datesArray, t),
+      ...getDayColumns(datesArray, companyId, refetch, locale, t),
     ],
     [datesArray, companyId, refetch],
   );

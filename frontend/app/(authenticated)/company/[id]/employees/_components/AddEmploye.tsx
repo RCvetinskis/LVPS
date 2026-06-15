@@ -21,11 +21,11 @@ import { authenticatedApi } from "@/lib/api-handler";
 import { toast } from "sonner";
 import { userInvitationSchema } from "@/schemas/user-schema.ts";
 import { useCompanyStore } from "@/stores/company-store";
+import { useTranslations } from "next-intl";
 
-type Props = {};
-
-const AddEmploye = (props: Props) => {
+const AddEmploye = () => {
   const { company } = useCompanyStore();
+  const t = useTranslations("Employee");
 
   const form = useForm<z.infer<typeof userInvitationSchema>>({
     resolver: zodResolver(userInvitationSchema),
@@ -48,22 +48,21 @@ const AddEmploye = (props: Props) => {
         },
       });
       console.log(response);
-      toast.success(response.data.message);
+      toast.success(response.data.message || t("inviteSuccess"));
+      form.reset();
     } catch (error: any) {
       console.log(error);
-      const errorMessage = error.message || "Invitation Failed";
-
+      const errorMessage =
+        error.response?.data?.message || error.message || t("inviteFailed");
       toast.error(errorMessage);
     }
   }
+
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle>Add new employee</CardTitle>
-        <CardDescription>
-          User will receive email and after confirmation he can access your
-          company.
-        </CardDescription>
+        <CardTitle>{t("title")}</CardTitle>
+        <CardDescription>{t("description")}</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -74,13 +73,13 @@ const AddEmploye = (props: Props) => {
                 control={form.control}
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="email">Email</FieldLabel>
+                    <FieldLabel htmlFor="email">{t("email")}</FieldLabel>
                     <Input
                       {...field}
                       aria-invalid={fieldState.invalid}
                       id="email"
                       type="email"
-                      placeholder="m@example.com"
+                      placeholder={t("emailPlaceholder")}
                       required
                     />
                     {fieldState.invalid && (
@@ -95,13 +94,13 @@ const AddEmploye = (props: Props) => {
                 control={form.control}
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="name">Name</FieldLabel>
+                    <FieldLabel htmlFor="name">{t("name")}</FieldLabel>
                     <Input
                       {...field}
                       aria-invalid={fieldState.invalid}
                       id="name"
                       type="text"
-                      placeholder="John"
+                      placeholder={t("namePlaceholder")}
                       required
                     />
                     {fieldState.invalid && (
@@ -116,13 +115,13 @@ const AddEmploye = (props: Props) => {
                 control={form.control}
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="surname">Surname</FieldLabel>
+                    <FieldLabel htmlFor="surname">{t("surname")}</FieldLabel>
                     <Input
                       {...field}
                       aria-invalid={fieldState.invalid}
                       id="surname"
                       type="text"
-                      placeholder="Doe"
+                      placeholder={t("surnamePlaceholder")}
                       required
                     />
                     {fieldState.invalid && (
@@ -133,7 +132,7 @@ const AddEmploye = (props: Props) => {
               />
 
               <Button type="submit" className="w-full">
-                Invite
+                {t("inviteButton")}
               </Button>
             </FieldGroup>
           </div>

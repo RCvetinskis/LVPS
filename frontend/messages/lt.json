@@ -1,0 +1,71 @@
+{
+    "Company": {
+        "myCompanies": "Mano Įmonės",
+        "noCompaniesFound": "Įmonių nerasta",
+        "location": "Lokacija",
+        "managingSince": "Valdo nuo"
+    },
+    "Navigation": {
+        "language": "Kalba",
+        "companies": "Įmonės",
+        "profile": "Profilis",
+        "myCompanies": "Mano Įmonės"
+    },
+    "UserActions": {
+        "signOut": "Atsijungti"
+    },
+    "CompanySideBar": {
+        "manageStaff": "Valdyti darbuotojus",
+        "employees": "Darbuotojai",
+        "addEmployee": "Pridėti darbuotoją",
+        "schedule": "Grafikas"
+    },
+    "Schedule": {
+        "employee": "Darbuotojas",
+        "totalHours": "Iš viso valandų",
+        "addShift": "Pridėti pamainą",
+        "editShift": "Redaguoti pamainą",
+        "hours": "val.",
+        "date": "Data",
+        "note": "Pastaba",
+        "notePlaceholder": "Parašykite pastabą",
+        "startTime": "Pradžios laikas",
+        "endTime": "Pabaigos laikas",
+        "createTitle": "Sukurti grafiką",
+        "editTitle": "Redaguoti grafiką",
+        "loading": "Kraunama...",
+        "deleteSchedule": "Ištrinti grafiką",
+        "deleteConfirmationTitle": "Ar tikrai norite ištrinti?",
+        "deleteConfirmationDescription": "Šis veiksmas yra negrįžtamas.",
+        "scheduleNotFound": "Grafikas nerastas",
+        "createButton": "Sukurti grafiką",
+        "updateButton": "Atnaujinti grafiką"
+    },
+    "Employee": {
+        "title": "Pridėti naują darbuotoją",
+        "description": "Vartotojas gaus el. laišką ir po patvirtinimo galės pasiekti jūsų įmonę.",
+        "email": "El. paštas",
+        "name": "Vardas",
+        "surname": "Pavardė",
+        "inviteButton": "Pakviesti",
+        "emailPlaceholder": "pavyzdys@pastas.lt",
+        "namePlaceholder": "Jonas",
+        "surnamePlaceholder": "Jonaitis",
+        "inviteSuccess": "Pakvietimas sėkmingai išsiųstas",
+        "inviteFailed": "Nepavyko išsiųsti pakvietimo",
+        "addedToSystemAt": "Pridėtas į sistemą:",
+        "role": "Rolė:",
+        "status": "Būsena:",
+        "editButton": "Redaguoti darbuotoją"
+    },
+    "Export": {
+        "noSchedules": "Nėra grafikų eksportavimui",
+        "noDateRange": "Pasirinkite datų intervalą",
+        "exportSuccess": "Eksportas sėkmingai baigtas",
+        "exportFailed": "Nepavyko eksportuoti grafikų",
+        "loadingSchedules": "Kraunami grafikai...",
+        "errorLoading": "Klaida kraunant grafikus",
+        "exporting": "Eksportuojama...",
+        "export": "Eksportuoti"
+    }
+}

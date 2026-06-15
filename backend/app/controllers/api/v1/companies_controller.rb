@@ -18,14 +18,13 @@ module Api
 
           if result.success?
             render_created(
-              @company,
-              message: I18n.t('messages.success')
+              serialize_resource(@company, CompanySerializer)
             )
           else
             render_error(result.error)
           end
         else
-          render_error(@company.errors)
+          render_error(@company.errors.full_messages.first)
 
         end
       end
@@ -35,9 +34,11 @@ module Api
         return unless authorize!('update_company', @company.id)
 
         if @company.update(company_params)
-          render json: { data: @company, message: I18n.t('messages.success') }
+          render_updated(serialize_resource(@company, CompanySerializer))
+
         else
-          render json: { error: @company.errors }, status: :unprocessable_entity
+          render_error(@company.errors.full_messages.first, :unprocessable_entity)
+
         end
       end
 

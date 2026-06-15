@@ -1,6 +1,7 @@
 import CalendarSelector from "@/components/calendar-selector";
 import TableContainer from "./_components/table-container";
-import { QueryProvider } from "@/app/providers/query-provider";
+import { QueryProvider } from "@/providers/query-provider";
+import ExportSchedule from "./_components/export-schedule";
 
 type Props = {
   params: Promise<{
@@ -18,6 +19,9 @@ const SchedulePage = async (props: Props) => {
           <CalendarSelector />
         </header>
 
+        <section>
+          <ExportSchedule companyId={params.id} companyName="test" />
+        </section>
         <TableContainer companyId={params.id} />
       </div>
     </QueryProvider>

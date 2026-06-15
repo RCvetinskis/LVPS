@@ -11,12 +11,14 @@ import {
 import { Button } from "@/components/ui/button";
 import { Edit } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 type Props = {
   company: TCompany;
 };
 
 const CompanyCard = ({ company }: Props) => {
+  const t = useTranslations("Company");
   const router = useRouter();
 
   const toggleEdit = (e: React.MouseEvent) => {
@@ -43,12 +45,12 @@ const CompanyCard = ({ company }: Props) => {
       </CardHeader>
       <CardContent>
         <div className="space-x-1">
-          <span className="font-semibold">Location:</span>
+          <span className="font-semibold">{t("location")}:</span>
           <span>{company.location}</span>
         </div>
 
         <div className="space-x-1">
-          <span className="font-semibold">Managing since:</span>
+          <span className="font-semibold">{t("managingSince")}:</span>
           <span>{company.created_at}</span>
         </div>
       </CardContent>

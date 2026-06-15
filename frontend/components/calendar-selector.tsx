@@ -4,16 +4,27 @@ import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent } from "@/components/ui/card";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useDateRangeStore } from "@/stores/date-range-store";
-import { addMonths, isAfter, isBefore, startOfDay } from "date-fns";
+import { enUS, lt } from "date-fns/locale";
+import { useCurrentUserStore } from "@/stores/user-store";
 
 const CalendarSelector = () => {
   const [mounted, setMounted] = useState(false);
+  const { locale } = useCurrentUserStore();
   const { dateRange, setDateRange } = useDateRangeStore();
   const isMobile = useIsMobile();
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  const getDateFnsLocale = () => {
+    switch (locale) {
+      case "lt":
+        return lt;
+      default:
+        return enUS;
+    }
+  };
 
   if (!mounted) {
     return (
@@ -30,6 +41,7 @@ const CalendarSelector = () => {
       <CardContent className="p-0">
         <Calendar
           mode="range"
+          locale={getDateFnsLocale()}
           defaultMonth={dateRange?.from}
           selected={dateRange}
           onSelect={setDateRange}

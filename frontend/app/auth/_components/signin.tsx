@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import Cookies from "js-cookie";
 import { useState } from "react";
+import { useCurrentUserStore } from "@/stores/user-store";
 
 const SignIn = () => {
   const router = useRouter();
@@ -28,7 +29,7 @@ const SignIn = () => {
   });
 
   const [loading, setLoading] = useState(false);
-
+  const { setToken, setCurrentUser, setLocale } = useCurrentUserStore();
   async function onSubmit(data: z.infer<typeof signInSchema>) {
     try {
       setLoading(true);
@@ -41,16 +42,11 @@ const SignIn = () => {
 
       if (!response.data.error) {
         const token = response.data.data.jwt;
-        localStorage.setItem("token", token);
+        const user = response.data.data.user;
 
-        if (response.data.data.user) {
-          localStorage.setItem("user", JSON.stringify(response.data.data.user));
-        }
-
-        Cookies.set("token", token, {
-          expires: 1,
-          sameSite: "lax",
-        });
+        setToken(token);
+        setCurrentUser(user);
+        setLocale(user.locale);
 
         toast.success("Login Successfully");
         router.push("/");

@@ -24,6 +24,7 @@ import {
 import AlertConfirmation from "@/components/alert-confirmation";
 import { toast } from "sonner";
 import { Textarea } from "@/components/ui/textarea";
+import { useTranslations } from "next-intl";
 
 type CreateScheduleProps = {
   children: React.ReactNode;
@@ -52,6 +53,7 @@ export const UpsertSchedule = ({
   initialNotes,
 }: CreateScheduleProps) => {
   const [open, setOpen] = useState(false);
+  const t = useTranslations("Schedule");
 
   const [startTime, setStartTime] = useState(
     initialStartTime || DEFAULT_SCHEDULE_START_TIME,
@@ -65,6 +67,7 @@ export const UpsertSchedule = ({
   const createSchedule = useCreateSchedule();
   const updateSchedule = scheduleId ? useUpdateSchedule(scheduleId) : null;
   const destroySchedule = scheduleId ? useDestroySchedule(scheduleId) : null;
+
   const handleSubmit = async () => {
     const localWorkDate = format(selectedDate, "yyyy-MM-dd");
 
@@ -93,15 +96,18 @@ export const UpsertSchedule = ({
       setOpen(false);
       onSuccess?.();
     } else {
-      toast.error("Schedule not found");
+      toast.error(t("scheduleNotFound"));
     }
   };
+
   const isPending =
     createSchedule.isPending ||
     (updateSchedule?.isPending ?? false) ||
     (destroySchedule?.isPending ?? false);
 
-  const title = scheduleId ? "Edit Schedule" : "Create Schedule";
+  const title = scheduleId ? t("editTitle") : t("createTitle");
+  const buttonText = scheduleId ? t("updateButton") : t("createButton");
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
@@ -111,49 +117,51 @@ export const UpsertSchedule = ({
         </DialogHeader>
         <div className="space-y-4 py-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium">Employee</label>
+            <label className="text-sm font-medium">{t("employee")}</label>
             <div className="p-2 border rounded bg-gray-50">{user.fullName}</div>
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">Date</label>
+            <label className="text-sm font-medium">{t("date")}</label>
             <div className="p-2 border rounded bg-gray-50">
               {format(selectedDate, "EEEE, MMMM dd, yyyy")}
             </div>
           </div>
 
           <div>
-            <label className="text-sm font-medium">Note</label>
-
+            <label className="text-sm font-medium">{t("note")}</label>
             <Textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="Leave a note"
+              placeholder={t("notePlaceholder")}
               className="resize-none"
             />
           </div>
-          <div className="flex justify-between items-center gap-3 ">
+
+          <div className="flex justify-between items-center gap-3">
             <div className="grid">
-              <label className="text-sm font-medium">Start Time</label>
+              <label className="text-sm font-medium">{t("startTime")}</label>
               <TimePicker value={startTime} onChange={setStartTime} />
             </div>
 
             <div className="grid">
-              <label className="text-sm font-medium">End Time</label>
+              <label className="text-sm font-medium">{t("endTime")}</label>
               <TimePicker value={endTime} onChange={setEndTime} />
             </div>
           </div>
+
           <Button
             onClick={handleSubmit}
             className="w-full"
             disabled={isPending}
           >
-            {isPending ? "Loading..." : title}
+            {isPending ? t("loading") : buttonText}
           </Button>
+
           {scheduleId && (
             <AlertConfirmation
-              title="Are you absolutely sure?"
-              description="This action cannot be undone."
+              title={t("deleteConfirmationTitle")}
+              description={t("deleteConfirmationDescription")}
               handleConfirmation={handleDelete}
             >
               <Button
@@ -161,7 +169,7 @@ export const UpsertSchedule = ({
                 className="w-full"
                 variant={"destructive"}
               >
-                Delete Schedule
+                {t("deleteSchedule")}
               </Button>
             </AlertConfirmation>
           )}

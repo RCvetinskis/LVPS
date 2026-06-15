@@ -1,0 +1,89 @@
+lt:
+  time:
+    formats:
+      default: "%Y.%m.%d"
+      short: "%H:%M"
+      long: "%Y m. %B %d d. %H:%M"
+  date:
+    formats:
+      default: "%Y.%m.%d"
+      short: "%m.%d"
+      long: "%Y m. %B %d d."
+    month_names:
+      [
+        ~,
+        "Sausio",
+        "Vasario",
+        "Kovo",
+        "Balandžio",
+        "Gegužės",
+        "Birželio",
+        "Liepos",
+        "Rugpjūčio",
+        "Rugsėjo",
+        "Spalio",
+        "Lapkričio",
+        "Gruodžio",
+      ]
+    day_names:
+      [
+        "Sekmadienis",
+        "Pirmadienis",
+        "Antradienis",
+        "Trečiadienis",
+        "Ketvirtadienis",
+        "Penktadienis",
+        "Šeštadienis",
+      ]
+    abbr_day_names: ["Sek", "Pir", "Ant", "Tre", "Ket", "Pen", "Šeš"]
+  messages:
+    success: "Sėkmingai išsaugota"
+    error: "Nepavyko išsaugoti"
+    not_found: "Elementas nerastas"
+    user_not_found: "Dabartinis vartotojas nerastas"
+    confirm: "Ar tikrai norite tęsti?"
+    cancel: "Atšaukti"
+    save: "Išsaugoti"
+    delete: "Ištrinti"
+    edit: "Redaguoti"
+    view: "Peržiūrėti"
+  activerecord:
+    attributes:
+      user:
+        statuses:
+          pending: "Laukiama"
+          active: "Aktyvus"
+          disabled: "Neaktyvus"
+    errors:
+      models:
+        user:
+          attributes:
+            email:
+              blank: "negali būti tuščias"
+              invalid: "netinkamas el. pašto formatas"
+              taken: "el. pašto adresas jau naudojamas"
+      messages:
+        record_invalid: "Galiojimo klaida: %{errors}"
+        restrict_dependent_destroy:
+          has_one: "Negalima ištrinti, nes yra priklausomas įrašas %{record}"
+          has_many: "Negalima ištrinti, nes yra priklausomų įrašų %{record}"
+          taken: "jau naudojamas"
+  export:
+    work_schedule_title: "DARBO GRAFIKAS"
+    schedule_sheet_name: "Grafikas"
+    daily_totals: "Dienos sumos"
+    unknown: "Nežinomas"
+    headers:
+      id: "Nr."
+      employee: "Vardas Pavardė"
+      position: "Pareigos"
+      total_days: "Iš viso dienų"
+      total_hours: "Iš viso valandų"
+  schedules:
+    update_success: "Atnaujintas grafikas darbuotojui %{user_name} data %{work_date}"
+    create_success: "Sukurtas grafikas darbuotojui %{user_name} data %{work_date}"
+    destroy_success: "Ištrintas grafikas darbuotojui %{user_name} data %{work_date}"
+  user:
+    sign_up_success: "Registracija sėkminga! Sveiki atvykę!"
+    invitations:
+      sent: "Pakvietimas išsiųstas %{email}"

@@ -8,14 +8,15 @@ import {
 } from "@/front-requests/schedule-requests";
 import { getCompanyEmployees } from "@/front-requests/company-requests";
 
-export const useCompanySchedules = (companyId: string) => {
+export const useCompanySchedules = (
+  companyId: string,
+  dateRange?: { from?: Date; to?: Date },
+) => {
   return useQuery({
-    queryKey: ["schedules", companyId],
-    queryFn: () => getCompanySchedules(companyId),
-    enabled: !!companyId,
+    queryKey: ["company-schedules", companyId, dateRange],
+    queryFn: () => getCompanySchedules(companyId, dateRange),
   });
 };
-
 export const useCompanyEmployees = (companyId: string) => {
   return useQuery({
     queryKey: ["employees", companyId],
@@ -24,8 +25,11 @@ export const useCompanyEmployees = (companyId: string) => {
   });
 };
 
-export const useSchedulePageData = (companyId: string) => {
-  const schedulesQuery = useCompanySchedules(companyId);
+export const useSchedulePageData = (
+  companyId: string,
+  dateRange?: { from?: Date; to?: Date },
+) => {
+  const schedulesQuery = useCompanySchedules(companyId, dateRange);
   const employeesQuery = useCompanyEmployees(companyId);
 
   const isLoading = schedulesQuery.isLoading || employeesQuery.isLoading;

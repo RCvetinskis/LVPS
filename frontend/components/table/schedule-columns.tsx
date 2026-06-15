@@ -1,6 +1,7 @@
 "use client";
 import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
+import { enUS, lt } from "date-fns/locale";
 import { UpsertSchedule } from "@/app/(authenticated)/company/[id]/schedule/_components/upsert-schedule";
 import ToolTipHover from "../tool-tip-hover";
 import { Button } from "../ui/button";
@@ -55,17 +56,35 @@ const parseHoursWorkedToMinutes = (hoursWorked: unknown): number => {
 
   return 0;
 };
-export const baseColumns = (dateRange: DateRange[]): TBaseColumns => [
+
+const getDateFnsLocale = (locale: string) => {
+  switch (locale) {
+    case "lt":
+      return lt;
+    default:
+      return enUS;
+  }
+};
+
+const formatDayName = (date: Date, locale: string) => {
+  const dateFnsLocale = getDateFnsLocale(locale);
+  return format(date, "EEE", { locale: dateFnsLocale });
+};
+
+export const baseColumns = (
+  dateRange: DateRange[],
+  t: (key: string) => string,
+): TBaseColumns => [
   {
     accessorKey: "user.fullName",
-    header: "Employee",
+    header: t("employee"),
     cell: ({ row }) => {
       return <p>{row.original.user.fullName}</p>;
     },
   },
   {
     id: "totalHours",
-    header: "Total Hours",
+    header: t("totalHours"),
     cell: ({ row }) => {
       let totalMinutes = 0;
 
@@ -102,6 +121,8 @@ export const getDayColumns = (
   dateRange: DateRange[],
   companyId: string,
   refetch: () => void,
+  locale: string,
+  t: (key: string) => string,
 ): TDayColumns => {
   return dateRange.map((date) => {
     const key = format(date.originalDay, "yyyy-MM-dd");
@@ -111,7 +132,7 @@ export const getDayColumns = (
       header: () => (
         <div className="text-center">
           <div>{format(date.originalDay, "d")}</div>
-          <div>{format(date.originalDay, "EEE")}</div>
+          <div>{formatDayName(date.originalDay, locale)}</div>
         </div>
       ),
       cell: ({ row }) => {
@@ -119,7 +140,7 @@ export const getDayColumns = (
 
         if (!shift) {
           return (
-            <ToolTipHover text="Add shift">
+            <ToolTipHover text={t("addShift")}>
               <div className="flex items-center justify-center">
                 <UpsertSchedule
                   companyId={companyId}
@@ -137,7 +158,7 @@ export const getDayColumns = (
         }
 
         return (
-          <ToolTipHover text="Edit shift hours">
+          <ToolTipHover text={t("editShift")}>
             <div className="flex items-center justify-center">
               <UpsertSchedule
                 companyId={companyId}
@@ -154,7 +175,8 @@ export const getDayColumns = (
                   <div>{shift.end}</div>
                   {shift.hoursWorked && (
                     <div className="border-t pt-1 text-gray-600">
-                      {shift.hoursWorked}h
+                      {shift.hoursWorked}
+                      {t("hours")}
                     </div>
                   )}
                 </div>
