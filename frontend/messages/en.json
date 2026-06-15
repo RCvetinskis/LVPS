@@ -67,5 +67,17 @@
         "errorLoading": "Error loading schedules",
         "exporting": "Exporting...",
         "export": "Export"
+    },
+    "Auth": {
+        "signin": {
+            "title": "Sign In",
+            "description": "Enter your credentials to access your account",
+            "toggleButton": "Sign Up"
+        },
+        "signup": {
+            "title": "Sign Up",
+            "description": "Create an account to get started",
+            "toggleButton": "Sign In"
+        }
     }
 }

@@ -67,5 +67,17 @@
         "errorLoading": "Klaida kraunant grafikus",
         "exporting": "Eksportuojama...",
         "export": "Eksportuoti"
+    },
+    "Auth": {
+        "signin": {
+            "title": "Prisijungti",
+            "description": "Įveskite savo prisijungimo duomenis",
+            "toggleButton": "Užsiregistruoti"
+        },
+        "signup": {
+            "title": "Užsiregistruoti",
+            "description": "Sukurkite paskyrą norėdami pradėti",
+            "toggleButton": "Prisijungti"
+        }
     }
 }

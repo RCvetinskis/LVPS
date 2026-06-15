@@ -14,7 +14,6 @@ import { Button } from "@/components/ui/button";
 import { api } from "@/lib/api-handler";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import Cookies from "js-cookie";
 import { useState } from "react";
 import { useCurrentUserStore } from "@/stores/user-store";
 

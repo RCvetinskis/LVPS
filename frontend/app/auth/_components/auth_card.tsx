@@ -5,44 +5,46 @@ import {
   CardAction,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { usePathname, useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 type AuthType = "signup" | "signin";
-const mappedType = {
-  signup: "Sign Up",
-  signin: "Sign in",
-};
 
 type Props = {
   children: React.ReactNode;
-  title: string;
-  description: string;
+  title?: string;
+  description?: string;
   email?: string;
 };
-
+// TODO: move navbar to global layout, and render language select for not authorized users as well
 const AuthCard = ({ children, title, description, email }: Props) => {
   const router = useRouter();
   const pathname = usePathname();
+  const t = useTranslations("Auth");
 
   const afterAuth = (pathname.split("/auth/")[1] as AuthType) || "signup";
   const next = afterAuth === "signup" ? "signin" : "signup";
+
   const toggleAuthType = () => {
     router.push(`/auth/${next}`);
   };
 
+  const cardTitle = title || t(`${afterAuth}.title`);
+  const cardDescription = description || t(`${afterAuth}.description`);
+  const toggleButtonText = t(`${next}.toggleButton`);
+
   return (
     <Card className="w-full max-w-sm">
       <CardHeader>
-        <CardTitle>{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
+        <CardTitle>{cardTitle}</CardTitle>
+        <CardDescription>{cardDescription}</CardDescription>
         {!email && (
           <CardAction>
             <Button variant="link" onClick={toggleAuthType}>
-              {mappedType[next]}
+              {toggleButtonText}
             </Button>
           </CardAction>
         )}
