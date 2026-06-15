@@ -49,6 +49,10 @@ lt:
     view: "Peržiūrėti"
   activerecord:
     attributes:
+      roles:
+        guest: "Svečias"
+        company_owner: "Įmonės savininkas"
+        employee: "Darbuotojas"
       user:
         statuses:
           pending: "Laukiama"

@@ -80,6 +80,10 @@ en:
     view: "View"
   activerecord:
     attributes:
+      roles:
+        guest: "Guest"
+        company_owner: "Company Owner"
+        employee: "Employee"
       user:
         statuses:
           pending: "Pending"
