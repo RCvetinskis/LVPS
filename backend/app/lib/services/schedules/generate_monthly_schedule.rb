@@ -1,6 +1,7 @@
 module Services
   module Schedules
     class GenerateMonthlySchedule < ApplicationService
+      STANDARD_DAILY_HOURS = 8
       def initialize(company_id, user_id, date_range, region = 'gb')
         super()
         @company_id = company_id
@@ -77,24 +78,31 @@ module Services
         existing_schedules.any? { |s| s.user_id == user_id && s.work_date == date }
       end
 
+      def legal_monthly_hour_limit
+        (date_range.begin..date_range.end).count do |date|
+          date.on_weekday? && !holiday?(date)
+        end * STANDARD_DAILY_HOURS
+      end
+
       def monthly_hour_limit
         return @monthly_hour_limit if defined?(@monthly_hour_limit)
 
-        total_hours = 0
+        # 1. Total hours the user could work based on their shift pattern
+        available_hours = 0
         (date_range.begin..date_range.end).each do |date|
           next unless in_work_cycle?(date)
-          next if standard_5x2? && holiday?(date)
+          # Rotating shifts skip holidays (they don't count towards the limit)
+          next if holiday?(date) && !standard_5x2?
 
-          total_hours += pattern.hours
+          available_hours += pattern.hours
         end
 
-        unless standard_5x2?
-          holidays.each do |_holiday|
-            total_hours -= pattern.hours
-          end
-        end
+        # 2. Legal maximum for the month (standard schedule minus holidays)
+        legal_max = legal_monthly_hour_limit
 
-        @monthly_hour_limit = [total_hours, 0].max
+        # 3. The target is the smaller of the two: never exceed the legal cap,
+        #    but also never force more hours than the user's pattern allows.
+        @monthly_hour_limit = [available_hours, legal_max].min
       end
 
       def build_expected_calendar
