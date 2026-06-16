@@ -97,6 +97,10 @@ en:
               blank: "can't be blank"
               invalid: "is invalid"
               taken: "has already been taken"
+        schedule:
+          attributes:
+            user_id:
+              already_scheduled: "%{full_name} already has a schedule on %{work_date} at %{company_name}"
       messages:
         record_invalid: "Validation failed: %{errors}"
         restrict_dependent_destroy:

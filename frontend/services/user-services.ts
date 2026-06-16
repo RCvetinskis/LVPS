@@ -12,3 +12,13 @@ export const getUserByInvitationTOken = async (
     return null;
   }
 };
+
+export const getUserById = async (id: string): Promise<TUser | null> => {
+  try {
+    const apiClient = await getServerApiClient();
+    const { data } = await apiClient.get(`/users/data/${id}`);
+    return data.data;
+  } catch (error) {
+    return null;
+  }
+};

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_06_14_212042) do
+ActiveRecord::Schema[7.0].define(version: 2026_06_15_164249) do
   create_table "companies", force: :cascade do |t|
     t.string "name", null: false
     t.string "location", null: false
@@ -75,6 +75,21 @@ ActiveRecord::Schema[7.0].define(version: 2026_06_14_212042) do
     t.index ["user_id"], name: "index_user_companies_on_user_id"
   end
 
+  create_table "user_work_shift_patterns", force: :cascade do |t|
+    t.integer "company_id", null: false
+    t.integer "user_id", null: false
+    t.string "name", null: false
+    t.decimal "hours", precision: 5, scale: 2, null: false
+    t.integer "work_days", null: false
+    t.integer "off_days", null: false
+    t.boolean "active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_id", "user_id", "name"], name: "idx_user_shift_pattern_unique", unique: true
+    t.index ["company_id"], name: "index_user_work_shift_patterns_on_company_id"
+    t.index ["user_id"], name: "index_user_work_shift_patterns_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -106,5 +121,7 @@ ActiveRecord::Schema[7.0].define(version: 2026_06_14_212042) do
   add_foreign_key "schedules", "users"
   add_foreign_key "user_companies", "companies"
   add_foreign_key "user_companies", "users"
+  add_foreign_key "user_work_shift_patterns", "companies"
+  add_foreign_key "user_work_shift_patterns", "users"
   add_foreign_key "users", "roles"
 end

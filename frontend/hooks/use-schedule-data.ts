@@ -1,6 +1,7 @@
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 
 import {
+  createMonthlySchedule,
   createSchedule,
   destroySchedule,
   getCompanySchedules,
@@ -54,6 +55,16 @@ export const useCreateSchedule = () => {
 
   return useMutation({
     mutationFn: (body: any) => createSchedule(body),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["schedule-data"] });
+    },
+  });
+};
+export const useCreateMonthlySchedule = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (body: any) => createMonthlySchedule(body),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["schedule-data"] });
     },

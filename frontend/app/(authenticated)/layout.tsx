@@ -7,9 +7,9 @@ type Props = {
 
 const GlobalLayout = ({ children }: Props) => {
   return (
-    <div>
+    <div className="relative">
       <NavBar />
-      <div className="max-w-450 w-full mx-auto p-1 md:p-2">{children}</div>
+      <div className=" p-1 mt-10 md:p-2">{children}</div>
     </div>
   );
 };

@@ -5,13 +5,15 @@ import { enUS, lt } from "date-fns/locale";
 import { UpsertSchedule } from "@/app/(authenticated)/company/[id]/schedule/_components/upsert-schedule";
 import ToolTipHover from "../tool-tip-hover";
 import { Button } from "../ui/button";
-import { Plus } from "lucide-react";
+import { Plus, PlusCircleIcon } from "lucide-react";
+import { useCreateMonthlySchedule } from "@/hooks/use-schedule-data";
+import { useDateRangeStore } from "@/stores/date-range-store";
 
 export type TTableSchedule = {
   id: number;
 };
 
-type DateRange = {
+type SelectedDays = {
   day: string;
   originalDay: Date;
 };
@@ -71,16 +73,60 @@ const formatDayName = (date: Date, locale: string) => {
   return format(date, "EEE", { locale: dateFnsLocale });
 };
 
+// Separate component for the create monthly schedule button
+const CreateMonthlyScheduleButton = ({
+  companyId,
+  userId,
+  refetch,
+}: {
+  companyId: string;
+  userId: number;
+  refetch: () => void;
+}) => {
+  const { dateRange } = useDateRangeStore();
+  const createMonthlySchedule = useCreateMonthlySchedule();
+
+  const handleClick = async () => {
+    if (!dateRange?.from || !dateRange?.to) return;
+
+    const body = {
+      company_id: companyId,
+      user_id: userId,
+      date_range: {
+        from: format(dateRange.from, "yyyy-MM-dd"),
+        to: format(dateRange.to, "yyyy-MM-dd"),
+      },
+    };
+
+    await createMonthlySchedule.mutateAsync(body);
+    refetch();
+  };
+
+  return (
+    <Button
+      disabled={createMonthlySchedule.isPending}
+      size={"icon-xs"}
+      onClick={handleClick}
+    >
+      <PlusCircleIcon />
+    </Button>
+  );
+};
+
 export const baseColumns = (
-  dateRange: DateRange[],
+  selectedDays: SelectedDays[],
   t: (key: string) => string,
+  companyId: string,
+  refetch: () => void,
 ): TBaseColumns => [
   {
     accessorKey: "user.fullName",
     header: t("employee"),
     cell: ({ row }) => {
-      return <p>{row.original.user.fullName}</p>;
+      return <p className="whitespace-nowrap">{row.original.user.fullName}</p>;
     },
+    size: 150,
+    minSize: 120,
   },
   {
     id: "totalHours",
@@ -88,7 +134,7 @@ export const baseColumns = (
     cell: ({ row }) => {
       let totalMinutes = 0;
 
-      dateRange.forEach((date) => {
+      selectedDays.forEach((date) => {
         const key = format(date.originalDay, "yyyy-MM-dd");
         const shift = row.original[key] as TShift | undefined;
         if (shift?.hoursWorked) {
@@ -105,34 +151,63 @@ export const baseColumns = (
 
       return (
         <div className="text-center">
-          <div className="font-semibold">
+          <div className="font-semibold whitespace-nowrap">
             {hours}h {minutes > 0 ? `${minutes}m` : ""}
           </div>
-          <div className="text-xs text-gray-500">
+          <div className="text-xs text-gray-500 whitespace-nowrap">
             ({(totalMinutes / 60).toFixed(1)}h)
           </div>
         </div>
       );
     },
+    size: 100,
+    minSize: 80,
+  },
+  {
+    id: "actions",
+    header: () => (
+      <div className="text-center">{t("createMonthlySchedule")}</div>
+    ),
+    cell: ({ row }) => {
+      return (
+        <div className="flex justify-center">
+          {!selectedDays.length ? (
+            "-"
+          ) : (
+            <CreateMonthlyScheduleButton
+              companyId={companyId}
+              userId={row.original.user.id}
+              refetch={refetch}
+            />
+          )}
+        </div>
+      );
+    },
+    size: 60,
+    minSize: 50,
   },
 ];
 
 export const getDayColumns = (
-  dateRange: DateRange[],
+  selectedDays: SelectedDays[],
   companyId: string,
   refetch: () => void,
   locale: string,
   t: (key: string) => string,
 ): TDayColumns => {
-  return dateRange.map((date) => {
+  return selectedDays.map((date) => {
     const key = format(date.originalDay, "yyyy-MM-dd");
 
     return {
       accessorKey: key,
       header: () => (
         <div className="text-center">
-          <div>{format(date.originalDay, "d")}</div>
-          <div>{formatDayName(date.originalDay, locale)}</div>
+          <div className="whitespace-nowrap">
+            {format(date.originalDay, "d")}
+          </div>
+          <div className="whitespace-nowrap">
+            {formatDayName(date.originalDay, locale)}
+          </div>
         </div>
       ),
       cell: ({ row }) => {
@@ -171,12 +246,14 @@ export const getDayColumns = (
                 initialNotes={shift.notes}
               >
                 <div className="text-center space-y-1 cursor-pointer">
-                  <div>{shift.start}</div>
-                  <div>{shift.end}</div>
+                  <div className="whitespace-nowrap">{shift.start}</div>
+                  <div className="whitespace-nowrap">{shift.end}</div>
                   {shift.hoursWorked && (
                     <div className="border-t pt-1 text-gray-600">
-                      {shift.hoursWorked}
-                      {t("hours")}
+                      <span className="whitespace-nowrap">
+                        {shift.hoursWorked}
+                      </span>
+                      <span className="whitespace-nowrap">{t("hours")}</span>
                     </div>
                   )}
                 </div>
@@ -185,6 +262,8 @@ export const getDayColumns = (
           </ToolTipHover>
         );
       },
+      size: 120,
+      minSize: 100,
     };
   });
 };

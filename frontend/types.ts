@@ -50,3 +50,13 @@ export type TSchedule = {
     id: number;
   };
 } & TCrudDate;
+
+export type TUserWorkShiftPattern = {
+  id: number;
+  company_id: number;
+  user_id: number;
+  hours: string;
+  name: string;
+  off_days: number;
+  work_days: number;
+} & TCrudDate;

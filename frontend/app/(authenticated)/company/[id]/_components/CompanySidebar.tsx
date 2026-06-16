@@ -64,10 +64,10 @@ const CompanySidebar = () => {
   };
 
   return (
-    <Sidebar className="pt-8">
+    <Sidebar className="pt-8 fixed">
       <SidebarHeader>
         <SidebarMenu>
-          <SidebarMenuItem>
+          <SidebarMenuItem className="top-4">
             <SidebarMenuButton size="lg" asChild>
               <Link href={companyBaseUrl}>
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">

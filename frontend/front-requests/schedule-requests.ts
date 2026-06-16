@@ -48,6 +48,29 @@ export const createSchedule = async (body: any): Promise<TSchedule | null> => {
     return null;
   }
 };
+
+export const createMonthlySchedule = async (
+  body: any,
+): Promise<TSchedule[] | []> => {
+  try {
+    const { data } = await authenticatedApi.post(
+      "schedules/create_monthly_schedule",
+      {
+        monthly_schedule: {
+          company_id: body.company_id,
+          user_id: body.user_id,
+          date_range: body.date_range,
+        },
+      },
+    );
+
+    toast.success(data.message);
+    return data.data;
+  } catch (error: any) {
+    toast.error(error.message || "Something went wrong");
+    return [];
+  }
+};
 export const updateSchedule = async ({
   id,
   body,

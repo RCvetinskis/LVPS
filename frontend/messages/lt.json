@@ -39,7 +39,10 @@
         "deleteConfirmationDescription": "Šis veiksmas yra negrįžtamas.",
         "scheduleNotFound": "Grafikas nerastas",
         "createButton": "Sukurti grafiką",
-        "updateButton": "Atnaujinti grafiką"
+        "updateButton": "Atnaujinti grafiką",
+        "createMonthlySchedule": "Sukurti mėnėsio grafiką",
+        "next": "Kitas",
+        "previous": "Praeitas"
     },
     "Employee": {
         "title": "Pridėti naują darbuotoją",
@@ -79,5 +82,19 @@
             "description": "Sukurkite paskyrą norėdami pradėti",
             "toggleButton": "Prisijungti"
         }
+    },
+    "EmployeeShiftPatterns": {
+        "editShiftTitle": "Redaguoti pamainą",
+        "inputName": "Pavadinimas",
+        "inputNamePlaceHolder": "Pilnas etatas",
+        "inputHours": "Valandos",
+        "inputWorkDays": "Darbo dienos",
+        "inputOffDays": "Laisvos dienos",
+        "saveButton": "Išsaugoti"
+    },
+    "Calendar": {
+        "selectedRange": "Pasirinktas laikotarpis",
+        "holidaysInRange": "Šventės pasirinktu laikotarpiu",
+        "shortenedDay": "Sutrumpinta diena"
     }
 }

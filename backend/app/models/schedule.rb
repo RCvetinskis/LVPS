@@ -69,7 +69,11 @@ class Schedule < ApplicationRecord
 
     return unless query.exists?
 
-    errors.add(:user_id, "already has a schedule on #{work_date}")
-    errors.add(:work_date, 'already has a schedule for this user')
+    errors.add(:base, I18n.t(
+                        'activerecord.errors.models.schedule.attributes.user_id.already_scheduled',
+                        work_date: work_date,
+                        company_name: query.first.company.name,
+                        full_name: "#{user.name} #{user.surname}"
+                      ))
   end
 end

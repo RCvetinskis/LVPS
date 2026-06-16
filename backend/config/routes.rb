@@ -17,14 +17,24 @@ Rails.application.routes.draw do
         end
 
         resource :locales, only: [:update]
+
+        resources :data, only: [:show]
       end
 
       resources :roles
+      resources :holidays
+
+      resources :user_work_shift_patterns, only: [:show] do
+        collection do
+          post :upsert, to: 'user_work_shift_patterns#upsert'
+        end
+      end
 
       resources :schedules do
         collection do
           get :company_schedules
           post :export_to_xlsx
+          post :create_monthly_schedule
         end
       end
 

@@ -66,6 +66,10 @@ lt:
               blank: "negali būti tuščias"
               invalid: "netinkamas el. pašto formatas"
               taken: "el. pašto adresas jau naudojamas"
+        schedule:
+          attributes:
+            user_id:
+              already_scheduled: "%{full_name} jau turi grafiką %{work_date} įmonėje %{company_name}"
       messages:
         record_invalid: "Galiojimo klaida: %{errors}"
         restrict_dependent_destroy:

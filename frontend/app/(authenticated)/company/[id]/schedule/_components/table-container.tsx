@@ -6,11 +6,15 @@ import {
 } from "@/components/table/schedule-columns";
 import { useSchedulePageData } from "@/hooks/use-schedule-data";
 import { format, eachDayOfInterval } from "date-fns";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useDateRangeStore } from "@/stores/date-range-store";
 import { useCurrentUserStore } from "@/stores/user-store";
 import { useTranslations } from "next-intl";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { Button } from "@/components/ui/button";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { DISPLAY_MOBILE_TABLE_ROWS } from "@/lib/constants";
 
 type Props = {
   companyId: string;
@@ -22,6 +26,9 @@ const TableContainer = ({ companyId }: Props) => {
     useSchedulePageData(companyId, dateRange);
   const { locale } = useCurrentUserStore();
   const t = useTranslations("Schedule");
+  const isMobile = useIsMobile();
+  const [mobileDayIndex, setMobileDayIndex] = useState(0);
+
   const tableData = useMemo(() => {
     if (!users.length) return [];
 
@@ -63,13 +70,39 @@ const TableContainer = ({ companyId }: Props) => {
     }));
   }, [dateRange]);
 
+  const mobileDates = useMemo(() => {
+    if (!isMobile || datesArray.length === 0) return datesArray;
+
+    const start = mobileDayIndex;
+    const end = Math.min(start + DISPLAY_MOBILE_TABLE_ROWS, datesArray.length);
+    return datesArray.slice(start, end);
+  }, [datesArray, mobileDayIndex, isMobile]);
+
+  const canGoNext =
+    isMobile && mobileDayIndex + DISPLAY_MOBILE_TABLE_ROWS < datesArray.length;
+  const canGoPrev = isMobile && mobileDayIndex > 0;
+
+  const handlePrevious = () => {
+    setMobileDayIndex((prev) => Math.max(0, prev - DISPLAY_MOBILE_TABLE_ROWS));
+  };
+
+  const handleNext = () => {
+    setMobileDayIndex((prev) =>
+      Math.min(
+        prev + DISPLAY_MOBILE_TABLE_ROWS,
+        datesArray.length - DISPLAY_MOBILE_TABLE_ROWS,
+      ),
+    );
+  };
+
   const columns = useMemo(
     () => [
-      ...baseColumns(datesArray, t),
-      ...getDayColumns(datesArray, companyId, refetch, locale, t),
+      ...baseColumns(mobileDates, t, companyId, refetch),
+      ...getDayColumns(mobileDates, companyId, refetch, locale, t),
     ],
-    [datesArray, companyId, refetch],
+    [mobileDates, companyId, refetch, locale, t],
   );
+
   if (isLoading) {
     return (
       <div className="space-y-4">
@@ -82,14 +115,43 @@ const TableContainer = ({ companyId }: Props) => {
   if (isError) {
     return (
       <div className="text-center text-red-500 p-4">
-        Error loading schedule data: {error?.message}
+        {t("errorLoading")}: {error?.message}
       </div>
     );
   }
 
   return (
-    <div className="space-y-4">
-      <DataTable columns={columns} data={tableData} />
+    <div className="space-y-4 w-full overflow-hidden">
+      {isMobile && datesArray.length > DISPLAY_MOBILE_TABLE_ROWS && (
+        <div className="flex items-center justify-between gap-2 px-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handlePrevious}
+            disabled={!canGoPrev}
+            className="flex-1"
+          >
+            <ChevronLeft className="h-4 w-4 mr-1" />
+            {t("previous")}
+          </Button>
+          <span className="text-sm text-muted-foreground whitespace-nowrap">
+            {format(mobileDates[0]?.originalDay, "MMM d")} -{" "}
+            {format(mobileDates[mobileDates.length - 1]?.originalDay, "MMM d")}
+          </span>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleNext}
+            disabled={!canGoNext}
+            className="flex-1"
+          >
+            {t("next")}
+            <ChevronRight className="h-4 w-4 ml-1" />
+          </Button>
+        </div>
+      )}
+
+      <DataTable columns={columns} data={tableData} isMobile={isMobile} />
     </div>
   );
 };

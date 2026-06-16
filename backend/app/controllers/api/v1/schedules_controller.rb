@@ -1,6 +1,7 @@
 module Api
   module V1
     class SchedulesController < ApplicationController
+      before_action :authenticate_api_v1_user!
       before_action :set_schedule, only: %i[show update destroy]
       before_action :set_company, only: %i[company_schedules export_to_xlsx]
 
@@ -29,6 +30,37 @@ module Api
                          create_update_message('schedules.create_success'))
         else
           render_error(@schedule.errors.full_messages.first, :unprocessable_entity)
+        end
+      end
+
+      # TODO: DESTROY_ALL_MONTHLY_SCHEDULES_FOR_USER
+      def create_monthly_schedule
+        mp = monthly_schedule_params
+
+        from = Date.parse(mp[:date_range][:from])
+        to   = Date.parse(mp[:date_range][:to])
+        date_range = (from.to_date..to.to_date)
+
+        result = Services::Schedules::GenerateMonthlySchedule.call(
+          mp[:company_id],
+          mp[:user_id],
+          date_range,
+          @region
+        )
+
+        if result.success?
+
+          if result.payload&.any?
+            render_created(serialize_collection(result.payload, ScheduleSerializer))
+          else
+            render json: {
+              message: 'No schedules were created',
+              schedules: []
+            }, status: :ok
+          end
+        else
+          render_error(result.error)
+
         end
       end
 
@@ -61,7 +93,7 @@ module Api
           @company,
           schedule_ids,
           date_range,
-          I18n.locale
+          locale
         )
 
         send_data(
@@ -82,9 +114,12 @@ module Api
         @company = current_api_v1_user.companies.find_by(id: params[:company_id])
       end
 
-      # Only allow a list of trusted parameters through.
       def schedule_params
         params.require(:schedule).permit(:company_id, :user_id, :work_date, :start_time, :end_time, :notes)
+      end
+
+      def monthly_schedule_params
+        params.require(:monthly_schedule).permit(:company_id, :user_id, date_range: %i[from to])
       end
 
       def create_update_message(translation_name)

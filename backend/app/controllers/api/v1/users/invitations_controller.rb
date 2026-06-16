@@ -2,8 +2,9 @@ module Api
   module V1
     module Users
       class InvitationsController < ApplicationController
-        before_action :set_user, :invitation_params, :authenticate_api_v1_user!, only: [:create]
-
+        before_action :set_user, only: [:create]
+        before_action :invitation_params, only: [:create]
+        before_action :authenticate_api_v1_user!, only: [:create]
         before_action :user_by_token, only: %i[show set_password]
 
         def create
@@ -23,7 +24,7 @@ module Api
                 UserMailer.invitation_mail(company, @user).deliver_now
                 render_success(
                   serialize_resource(@user, UserSerializer),
-                  I18n.t('user.invitations.sent', @user.email)
+                  I18n.t('user.invitations.sent', email: @user.email)
                 )
               else
                 render_error(result.error)
@@ -37,7 +38,6 @@ module Api
         def show
           if @token_user
             render_success(serialize_resource(@token_user, UserSerializer), I18n.t('messages.user_not_found'))
-
           else
             render_error('user not found', 404)
           end
@@ -50,8 +50,7 @@ module Api
           if @token_user.save
             render_success(nil, I18n.t('success'))
           else
-
-            render_error
+            render_error(@token_user.errors.full_messages.first)
           end
         end
 

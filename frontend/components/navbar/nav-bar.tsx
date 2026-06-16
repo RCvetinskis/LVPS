@@ -87,7 +87,7 @@ const NavBar = (props: Props) => {
   ];
 
   return (
-    <Menubar className="relative z-50 bg-secondary">
+    <Menubar className="fixed w-full p-4 z-50 flex justify-end bg-secondary">
       {items.map((item) => (
         <MenubarMenu key={item.id}>
           <MenubarTrigger className="cursor-pointer gap-2">

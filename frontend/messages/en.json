@@ -39,7 +39,10 @@
         "deleteConfirmationDescription": "This action cannot be undone.",
         "scheduleNotFound": "Schedule not found",
         "createButton": "Create Schedule",
-        "updateButton": "Update Schedule"
+        "updateButton": "Update Schedule",
+        "createMonthlySchedule": "Create Monthly Schedule",
+        "next": "Next",
+        "previous": "Previous"
     },
     "Employee": {
         "title": "Add new employee",
@@ -79,5 +82,19 @@
             "description": "Create an account to get started",
             "toggleButton": "Sign In"
         }
+    },
+    "EmployeeShiftPatterns": {
+        "editShiftTitle": " Edit Shift",
+        "inputName": "Name",
+        "inputNamePlaceHolder": "Full Time",
+        "inputHours": "Hours",
+        "inputWorkDays": "Work Days",
+        "inputOffDays": "Off Days",
+        "saveButton": "Save"
+    },
+    "Calendar": {
+        "selectedRange": "Selected Range",
+        "holidaysInRange": "Holidays in selected range",
+        "shortenedDay": "Shortened Day"
     }
 }
