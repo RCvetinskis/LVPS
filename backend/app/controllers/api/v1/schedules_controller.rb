@@ -8,10 +8,12 @@ module Api
       # GET /schedules
       def company_schedules
         schedules = @company.schedules
-        from_date = params[:from]
-        to_date = params[:to]
 
-        schedules = schedules.by_range_date(from_date, to_date) if from_date.present? && to_date.present?
+        if params[:from].present? && params[:to].present?
+          from_date = Date.parse(params[:from])
+          to_date = Date.parse(params[:to])
+          schedules = schedules.by_range_date(from_date, to_date)
+        end
 
         render_success(serialize_collection(schedules, ScheduleSerializer))
       end
