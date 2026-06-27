@@ -72,6 +72,8 @@ en:
     error: "Failed to save"
     not_found: "Item not found"
     user_not_found: "Current user not found"
+    company_not_found: "Company not found"
+    schedules_not_found: "Workers schedules are not found"
     confirm: "Are you sure you want to continue?"
     cancel: "Cancel"
     save: "Save"
@@ -89,7 +91,11 @@ en:
           pending: "Pending"
           active: "Active"
           disabled: "Disabled"
+        schedule:
+          location: "Lokacija"
+          location_id: "Lokacija"
     errors:
+      format: "%{message}"
       models:
         user:
           attributes:
@@ -97,6 +103,28 @@ en:
               blank: "can't be blank"
               invalid: "is invalid"
               taken: "has already been taken"
+        schedule:
+          attributes:
+            location:
+              required: "is required"
+              blank: "can't be blank"
+            location_id:
+              blank: "Location is required"
+              required: "Location is required"
+              must_belong: "must belong to the company"
+            user_id:
+              already_scheduled: "%{full_name} already has a schedule on %{work_date} at %{company_name}"
+        location:
+          attributes:
+            name:
+              taken: "Location name has already been taken for this company"
+              blank: "Location name cannot be blank"
+            address:
+              blank: "Location address cannot be blank"
+            company_id:
+              blank: "Company must be selected"
+            primary_location:
+              already_exists: "A default location already exists for this company"
       messages:
         record_invalid: "Validation failed: %{errors}"
         restrict_dependent_destroy:
@@ -117,7 +145,26 @@ en:
     update_success: "Update schedule for %{user_name} at %{work_date}"
     create_success: "Schedule created for %{user_name} at %{work_date}"
     destroy_success: "Schedule deleted for %{user_name} at %{work_date}"
+    errors:
+      missing_work_pattern: "User work shift pattern not found. Please configure a work pattern for this user."
+      invalid_date_range: "Invalid date range. Please provide valid from and to dates."
+  schedule_types:
+    work_day: "Work Day"
+    overtime: "Overtime"
+    vacation: "Vacation"
+    sick_leave: "Sick Leave"
+    unpaid_leave: "Unpaid Leave"
+    holiday: "Holiday"
+    short:
+      work_day: ""
+      overtime: "OT"
+      vacation: "V"
+      sick_leave: "SL"
+      unpaid_leave: "UL"
+      holiday: "H"
   user:
     sign_up_success: "Registration successful! Welcome aboard!"
     invitations:
       sent: "Invitation sent to %{email}"
+  general:
+    hours: "h."

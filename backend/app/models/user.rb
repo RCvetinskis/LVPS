@@ -8,8 +8,14 @@ class User < ApplicationRecord
   has_many :user_companies
   has_many :companies, through: :user_companies
   has_many :schedules, dependent: :destroy
+  has_one :user_work_shift_pattern, class_name: 'UserWorkShiftPattern', dependent: :destroy
+  has_one :pattern_company, through: :user_work_shift_pattern, source: :company
+  has_many :pattern_companies, through: :user_work_shift_patterns, source: :company
+
   belongs_to :role, optional: true
   attr_accessor :skip_password_validation
+
+  after_commit :create_default_work_shift_pattern, on: :create, if: :employee?
 
   devise :database_authenticatable, :registerable, :recoverable, :validatable, :jwt_authenticatable,
          jwt_revocation_strategy: self
@@ -60,6 +66,21 @@ class User < ApplicationRecord
   end
 
   private
+
+  def create_default_work_shift_pattern
+    company = companies.first
+    return unless company
+
+    default_pattern = UserWorkShiftPattern::DEFAULT_WORK_PATTERNS[:full_time]
+    create_user_work_shift_pattern!(
+      company: company,
+      name: '5x2',
+      hours: default_pattern[:hours],
+      work_days: default_pattern[:work_days],
+      off_days: default_pattern[:off_days],
+      active: true
+    )
+  end
 
   def password_required?
     return false if skip_password_validation

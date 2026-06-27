@@ -2,16 +2,21 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { enUS, lt } from "date-fns/locale";
-import { UpsertSchedule } from "@/app/(authenticated)/company/[id]/schedule/_components/upsert-schedule";
+
 import ToolTipHover from "../tool-tip-hover";
 import { Button } from "../ui/button";
 import { Plus } from "lucide-react";
+
+import { TLabelValue } from "@/types";
+import CreateMonthlySchedule from "@/app/(authenticated)/company/[id]/locations/[locationId]/schedule/_components/create-monthly-schedule";
+import DeleteSchedules from "@/app/(authenticated)/company/[id]/locations/[locationId]/schedule/_components/delete-schedules";
+import { UpsertSchedule } from "@/app/(authenticated)/company/[id]/locations/[locationId]/schedule/_components/upsert-schedule";
 
 export type TTableSchedule = {
   id: number;
 };
 
-type DateRange = {
+type SelectedDays = {
   day: string;
   originalDay: Date;
 };
@@ -30,7 +35,7 @@ type TShift = {
   end: string;
   scheduleId: number;
   hoursWorked?: number;
-  notes?: string;
+  schedule_type?: string;
   id?: number;
 };
 
@@ -72,15 +77,20 @@ const formatDayName = (date: Date, locale: string) => {
 };
 
 export const baseColumns = (
-  dateRange: DateRange[],
+  selectedDays: SelectedDays[],
   t: (key: string) => string,
+  companyId: string,
+  locationId: string,
+  refetch: () => void,
 ): TBaseColumns => [
   {
     accessorKey: "user.fullName",
     header: t("employee"),
     cell: ({ row }) => {
-      return <p>{row.original.user.fullName}</p>;
+      return <p className="whitespace-nowrap">{row.original.user.fullName}</p>;
     },
+    size: 150,
+    minSize: 120,
   },
   {
     id: "totalHours",
@@ -88,7 +98,7 @@ export const baseColumns = (
     cell: ({ row }) => {
       let totalMinutes = 0;
 
-      dateRange.forEach((date) => {
+      selectedDays.forEach((date) => {
         const key = format(date.originalDay, "yyyy-MM-dd");
         const shift = row.original[key] as TShift | undefined;
         if (shift?.hoursWorked) {
@@ -105,34 +115,73 @@ export const baseColumns = (
 
       return (
         <div className="text-center">
-          <div className="font-semibold">
+          <div className="font-semibold whitespace-nowrap">
             {hours}h {minutes > 0 ? `${minutes}m` : ""}
           </div>
-          <div className="text-xs text-gray-500">
+          <div className="text-xs text-gray-500 whitespace-nowrap">
             ({(totalMinutes / 60).toFixed(1)}h)
           </div>
         </div>
       );
     },
+    size: 100,
+    minSize: 80,
+  },
+  {
+    id: "actions",
+    header: () => (
+      <div className="text-center">{t("createMonthlySchedule")}</div>
+    ),
+    cell: ({ row }) => {
+      return (
+        <div className="flex justify-center">
+          {!selectedDays.length ? (
+            "-"
+          ) : (
+            <div>
+              <CreateMonthlySchedule
+                companyId={companyId}
+                locationId={locationId}
+                userId={row.original.user.id}
+                refetch={refetch}
+              />
+              <DeleteSchedules
+                companyId={companyId}
+                userId={row.original.user.id}
+                refetch={refetch}
+              />
+            </div>
+          )}
+        </div>
+      );
+    },
+    size: 60,
+    minSize: 50,
   },
 ];
 
 export const getDayColumns = (
-  dateRange: DateRange[],
+  selectedDays: SelectedDays[],
   companyId: string,
+  locationId: string,
   refetch: () => void,
   locale: string,
   t: (key: string) => string,
+  scheduleTypes: TLabelValue[],
 ): TDayColumns => {
-  return dateRange.map((date) => {
+  return selectedDays.map((date) => {
     const key = format(date.originalDay, "yyyy-MM-dd");
 
     return {
       accessorKey: key,
       header: () => (
         <div className="text-center">
-          <div>{format(date.originalDay, "d")}</div>
-          <div>{formatDayName(date.originalDay, locale)}</div>
+          <div className="whitespace-nowrap">
+            {format(date.originalDay, "d")}
+          </div>
+          <div className="whitespace-nowrap">
+            {formatDayName(date.originalDay, locale)}
+          </div>
         </div>
       ),
       cell: ({ row }) => {
@@ -144,6 +193,7 @@ export const getDayColumns = (
               <div className="flex items-center justify-center">
                 <UpsertSchedule
                   companyId={companyId}
+                  locationId={locationId}
                   user={row.original.user}
                   selectedDate={date.originalDay}
                   onSuccess={refetch}
@@ -156,27 +206,38 @@ export const getDayColumns = (
             </ToolTipHover>
           );
         }
-
+        const currentScheduleType = scheduleTypes?.find(
+          (item) => item.value === shift.schedule_type,
+        );
+        const scheduleTypeShortCut =
+          currentScheduleType?.value === "work_day"
+            ? ""
+            : currentScheduleType?.label?.[0] || "";
         return (
           <ToolTipHover text={t("editShift")}>
             <div className="flex items-center justify-center">
               <UpsertSchedule
                 companyId={companyId}
+                locationId={locationId}
                 user={row.original.user}
                 selectedDate={date.originalDay}
                 onSuccess={refetch}
                 scheduleId={shift.scheduleId}
                 initialStartTime={shift.start}
                 initialEndTime={shift.end}
-                initialNotes={shift.notes}
+                initialScheduleType={shift.schedule_type}
               >
                 <div className="text-center space-y-1 cursor-pointer">
-                  <div>{shift.start}</div>
-                  <div>{shift.end}</div>
+                  <div className="whitespace-nowrap">{shift.start}</div>
+                  <div className="whitespace-nowrap">{shift.end}</div>
                   {shift.hoursWorked && (
                     <div className="border-t pt-1 text-gray-600">
-                      {shift.hoursWorked}
-                      {t("hours")}
+                      <span className="whitespace-nowrap capitalize">
+                        {scheduleTypeShortCut}
+                      </span>
+                      <span className="whitespace-nowrap">
+                        {shift.hoursWorked}
+                      </span>
                     </div>
                   )}
                 </div>
@@ -185,6 +246,8 @@ export const getDayColumns = (
           </ToolTipHover>
         );
       },
+      size: 120,
+      minSize: 100,
     };
   });
 };

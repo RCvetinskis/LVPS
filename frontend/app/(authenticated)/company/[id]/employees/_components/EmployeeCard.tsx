@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { EditIcon } from "lucide-react";
 import { useCompanyStore } from "@/stores/company-store";
 import { useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
 
 type Props = {
   employee: TUser;
@@ -20,8 +21,7 @@ type Props = {
 const EmployeeCard = ({ employee }: Props) => {
   const { permissions } = useCompanyStore();
   const t = useTranslations("Employee");
-
-  // Format date if needed
+  const router = useRouter();
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString();
@@ -37,6 +37,7 @@ const EmployeeCard = ({ employee }: Props) => {
         {permissions?.manage_company_users && (
           <CardAction>
             <Button
+              onClick={() => router.push(`employees/${employee.id}/edit`)}
               variant="outline"
               size="icon"
               aria-label={t("editButton")}

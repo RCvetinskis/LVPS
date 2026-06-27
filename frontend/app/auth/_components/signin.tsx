@@ -84,7 +84,8 @@ const SignIn = () => {
               </Field>
             )}
           />
-
+        </FieldGroup>
+        <FieldGroup>
           <Controller
             name="password"
             control={form.control}

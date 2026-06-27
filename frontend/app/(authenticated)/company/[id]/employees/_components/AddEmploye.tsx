@@ -22,11 +22,12 @@ import { toast } from "sonner";
 import { userInvitationSchema } from "@/schemas/user-schema.ts";
 import { useCompanyStore } from "@/stores/company-store";
 import { useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
 
 const AddEmploye = () => {
   const { company } = useCompanyStore();
   const t = useTranslations("Employee");
-
+  const router = useRouter();
   const form = useForm<z.infer<typeof userInvitationSchema>>({
     resolver: zodResolver(userInvitationSchema),
     defaultValues: {
@@ -44,16 +45,13 @@ const AddEmploye = () => {
           name: data.name,
           surname: data.surname,
           company_id: company?.id,
-          role_id: 5, // as employee TODO: later display role selection in the ui,
         },
       });
-      console.log(response);
       toast.success(response.data.message || t("inviteSuccess"));
       form.reset();
+      router.push(`${response.data.data.id}/edit`);
     } catch (error: any) {
-      console.log(error);
-      const errorMessage =
-        error.response?.data?.message || error.message || t("inviteFailed");
+      const errorMessage = error.message || t("inviteFailed");
       toast.error(errorMessage);
     }
   }

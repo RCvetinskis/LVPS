@@ -1,15 +1,22 @@
 class Schedule < ApplicationRecord
   belongs_to :company
   belongs_to :user
+  belongs_to :location
 
   STATUSES = %w[scheduled completed absent sick vacation holiday late].freeze
   HOURS_CALCULABLE_STATUSES = %w[scheduled completed].freeze
+  SCHEDULE_TYPES = %w[work_day vacation sick_leave unpaid_leave overtime holiday].freeze
+
   validates :work_date, presence: true
   validates :start_time, presence: true
   validates :end_time, presence: true
   validates :status, inclusion: { in: STATUSES }
+  validates :schedule_type, inclusion: { in: SCHEDULE_TYPES }
+  validates :location_id, presence: true
+
   validate :end_time_after_start_time
   validate :unique_schedule_per_day, on: %i[create update]
+  validate :location_belongs_to_company
 
   attribute :status, :string, default: 'scheduled'
 
@@ -23,8 +30,17 @@ class Schedule < ApplicationRecord
   before_validation :combine_date_and_time
 
   before_save :calculate_hours_worked, if: -> { start_time.present? && end_time.present? }
+  attr_reader :conflict_url
 
   private
+
+  def location_belongs_to_company
+    return unless location_id.present? && company_id.present?
+
+    return if Location.exists?(id: location_id, company_id: company_id)
+
+    errors.add(:location_id, 'must belong to the company')
+  end
 
   def end_time_after_start_time
     return if start_time.blank? || end_time.blank?
@@ -69,7 +85,24 @@ class Schedule < ApplicationRecord
 
     return unless query.exists?
 
-    errors.add(:user_id, "already has a schedule on #{work_date}")
-    errors.add(:work_date, 'already has a schedule for this user')
+    existing_schedule = query.first
+    company = existing_schedule.company
+    location = existing_schedule.location
+    company_name = company.name
+    if location
+      schedule_url = "/company/#{company.id}/locations/#{location.id}/schedule?date=#{work_date}"
+      company_name = "#{company.name}, #{location.address}"
+      @conflict_url = schedule_url
+    end
+
+    errors.add(
+      :base,
+      I18n.t(
+        'activerecord.errors.models.schedule.attributes.user_id.already_scheduled',
+        work_date: work_date,
+        company_name: company_name,
+        full_name: "#{user.name} #{user.surname}"
+      )
+    )
   end
 end
