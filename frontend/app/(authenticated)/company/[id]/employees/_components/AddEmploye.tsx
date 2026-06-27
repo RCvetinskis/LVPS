@@ -51,8 +51,7 @@ const AddEmploye = () => {
       form.reset();
       router.push(`${response.data.data.id}/edit`);
     } catch (error: any) {
-      const errorMessage =
-        error.response?.data?.message || error.message || t("inviteFailed");
+      const errorMessage = error.message || t("inviteFailed");
       toast.error(errorMessage);
     }
   }

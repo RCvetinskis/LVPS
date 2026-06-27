@@ -41,6 +41,8 @@ lt:
     error: "Nepavyko išsaugoti"
     not_found: "Elementas nerastas"
     user_not_found: "Dabartinis vartotojas nerastas"
+    company_not_found: "Įmonė nerasta"
+    schedules_not_found: "Darbuotojo tvarkaraščiai nerasti"
     confirm: "Ar tikrai norite tęsti?"
     cancel: "Atšaukti"
     save: "Išsaugoti"
@@ -58,7 +60,11 @@ lt:
           pending: "Laukiama"
           active: "Aktyvus"
           disabled: "Neaktyvus"
+      schedule:
+        location: "Lokacija"
+        location_id: "Lokacija"
     errors:
+      format: "%{message}"
       models:
         user:
           attributes:
@@ -68,8 +74,26 @@ lt:
               taken: "el. pašto adresas jau naudojamas"
         schedule:
           attributes:
+            location:
+              required: "yra privaloma"
+              blank: "negali būti tuščia"
+            location_id:
+              blank: "Lokacija yra privaloma"
+              required: "Lokacija yra privaloma"
+              must_belong: "turi priklausyti įmonei"
             user_id:
               already_scheduled: "%{full_name} jau turi grafiką %{work_date} įmonėje %{company_name}"
+        location:
+          attributes:
+            name:
+              taken: "Lokacijos pavadinimas jau naudojamas šioje įmonėje"
+              blank: "Lokacijos pavadinimas negali būti tuščias"
+            address:
+              blank: "Lokacijos adresas negali būti tuščias"
+            company_id:
+              blank: "Įmonė turi būti pasirinkta"
+            primary_location:
+              already_exists: "Pagrindinė lokacija šiai įmonei jau egzistuoja"
       messages:
         record_invalid: "Galiojimo klaida: %{errors}"
         restrict_dependent_destroy:
@@ -91,7 +115,26 @@ lt:
     update_success: "Atnaujintas grafikas darbuotojui %{user_name} data %{work_date}"
     create_success: "Sukurtas grafikas darbuotojui %{user_name} data %{work_date}"
     destroy_success: "Ištrintas grafikas darbuotojui %{user_name} data %{work_date}"
+    errors:
+      missing_work_pattern: "Nerastas vartotojo darbo pamainos šablonas. Prašome sukonfigūruoti darbo šabloną šiam vartotojui."
+      invalid_date_range: "Neteisingas datų intervalas. Prašome nurodyti galiojančias nuo ir iki data"
+  schedule_types:
+    work_day: "Darbo diena"
+    overtime: "Viršvalandžiai"
+    vacation: "Atostogos"
+    sick_leave: "Biuletenis"
+    unpaid_leave: "Neapmokamos atostogos"
+    holiday: "Šventinė diena"
+    short:
+      work_day: ""
+      overtime: "VIR"
+      vacation: "A"
+      sick_leave: "B"
+      unpaid_leave: "NA"
+      holiday: "Š"
   user:
     sign_up_success: "Registracija sėkminga! Sveiki atvykę!"
     invitations:
       sent: "Pakvietimas išsiųstas %{email}"
+  general:
+    hours: "val."

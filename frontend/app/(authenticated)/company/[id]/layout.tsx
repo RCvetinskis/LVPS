@@ -26,9 +26,7 @@ const CompanyLayout = async (props: Props) => {
       <CompanySidebar />
       <main className="min-w-0 flex-1 w-full overflow-hidden">
         <SidebarTrigger className="fixed top-0 left-4 z-50" />
-        <div className="w-full max-w-full overflow-x-hidden pt-10 px-4">
-          {props.children}
-        </div>
+        <div className="w-full max-w-full  px-4">{props.children}</div>
       </main>
     </SidebarProvider>
   );

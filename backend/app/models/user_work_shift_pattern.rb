@@ -14,6 +14,9 @@ class UserWorkShiftPattern < ApplicationRecord
 
   scope :active, -> { where(active: true) }
   scope :for_company, ->(company) { where(company_id: company) }
-  scope :for_user, ->(user) { find_by(user_id: user) }
   scope :for_user_in_company, ->(user, company) { where(user_id: user, company_id: company) }
+
+  def self.for_user(user)
+    find_by(user_id: user)
+  end
 end

@@ -3,7 +3,10 @@
         "myCompanies": "Mano Įmonės",
         "noCompaniesFound": "Įmonių nerasta",
         "location": "Lokacija",
-        "managingSince": "Valdo nuo"
+        "managingSince": "Valdo nuo",
+        "description": "Aprašymas",
+        "edit": "Redaguoti",
+        "delete": "Ištrinti"
     },
     "Navigation": {
         "language": "Kalba",
@@ -18,7 +21,9 @@
         "manageStaff": "Valdyti darbuotojus",
         "employees": "Darbuotojai",
         "addEmployee": "Pridėti darbuotoją",
-        "schedule": "Grafikas"
+        "schedule": "Grafikas",
+        "locations": "Lokacijos",
+        "createLocation": "Sukurti lokaciją"
     },
     "Schedule": {
         "employee": "Darbuotojas",
@@ -27,7 +32,7 @@
         "editShift": "Redaguoti pamainą",
         "hours": "val.",
         "date": "Data",
-        "note": "Pastaba",
+        "scheduleType": "Tvarkaraščio tipas",
         "notePlaceholder": "Parašykite pastabą",
         "startTime": "Pradžios laikas",
         "endTime": "Pabaigos laikas",
@@ -95,6 +100,46 @@
     "Calendar": {
         "selectedRange": "Pasirinktas laikotarpis",
         "holidaysInRange": "Šventės pasirinktu laikotarpiu",
-        "shortenedDay": "Sutrumpinta diena"
+        "shortenedDay": "Sutrumpinta diena",
+        "address": "Adresas"
+    },
+    "Location": {
+        "default": "Pagrindinis",
+        "active": "Aktyvus",
+        "inactive": "Neaktyvus",
+        "locationId": "Lokacija #{id}",
+        "address": "Adresas",
+        "notes": "Pastabos",
+        "createdAt": "Sukurta",
+        "updatedAt": "Atnaujinta",
+        "setDefault": "Nustatyti pagrindiniu",
+        "edit": "Redaguoti",
+        "delete": "Ištrinti",
+        "createTitle": "Sukurti lokaciją",
+        "editTitle": "Redaguoti lokaciją",
+        "createDescription": "Užpildykite informaciją, kad sukurtumėte naują lokaciją",
+        "editDescription": "Redaguoti lokacijos informaciją",
+        "name": "Pavadinimas",
+        "namePlaceholder": "Vilniaus biuras",
+        "addressPlaceholder": "Gedimino pr. 1",
+        "city": "Miestas",
+        "cityPlaceholder": "Vilnius",
+        "country": "Šalis",
+        "countryPlaceholder": "Lietuva",
+        "postalCode": "Pašto kodas",
+        "postalCodePlaceholder": "LT-01100",
+        "phone": "Telefonas",
+        "phonePlaceholder": "+370 5 123 4567",
+        "email": "El. paštas",
+        "emailPlaceholder": "vilnius@imone.lt",
+        "notesPlaceholder": "Papildoma informacija apie šią lokaciją",
+        "defaultLocation": "Nustatyti kaip pagrindinę lokaciją",
+        "cancel": "Atšaukti",
+        "createButton": "Sukurti lokaciją",
+        "saveButton": "Išsaugoti pakeitimus",
+        "creating": "Kuriama...",
+        "saving": "Išsaugoma...",
+        "activeBadge": "Aktyvus",
+        "inactiveBadge": "Neaktyvus"
     }
 }

@@ -15,13 +15,17 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Skeleton } from "./ui/skeleton";
+
 import { DateRange } from "react-day-picker";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-
-const CalendarSelector = () => {
+import { ChevronRight, MapPin } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { TLocation } from "@/types";
+type Props = {
+  location: TLocation;
+};
+const CalendarSelector = ({ location }: Props) => {
   const [mounted, setMounted] = useState(false);
   const [loading, setLoading] = useState(false);
   const { locale } = useCurrentUserStore();
@@ -118,6 +122,19 @@ const CalendarSelector = () => {
       <CardContent
         className={`${isMobile ? "pt-2 px-1" : "pt-4 px-4"} mx-auto`}
       >
+        <div className="flex items-center justify-center text-center gap-3 rounded-lg bg-muted/50 p-3">
+          <MapPin className="h-5 w-5 text-muted-foreground" />
+          <div>
+            <p className="text-sm font-medium">{t("address")}</p>
+            <p className="text-sm text-muted-foreground">
+              {location.address}
+              {location.city && `, ${location.city}`}
+              {location.country && `, ${location.country}`}
+              {location.postal_code && ` (${location.postal_code})`}
+            </p>
+          </div>
+        </div>
+
         <style jsx global>{`
           .holiday button {
             background-color: #fee2e2 !important;
@@ -145,7 +162,6 @@ const CalendarSelector = () => {
             background-color: #bfdbfe !important;
           }
 
-          /* Mobile optimizations */
           @media (max-width: 768px) {
             .rdp {
               --rdp-cell-size: 36px !important;

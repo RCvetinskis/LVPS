@@ -10,12 +10,12 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Button } from "./ui/button";
+
 type Props = {
   children: React.ReactNode;
   title: string;
   description: string;
-  handleConfirmation: () => void;
+  handleConfirmation: (e: React.MouseEvent) => void;
 };
 
 const AlertConfirmation = ({

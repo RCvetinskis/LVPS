@@ -1,6 +1,5 @@
 import { getCompanyById } from "@/services/company-service";
 import CompanyForm from "../../_components/CompanyForm";
-import DeleteCompany from "../../_components/DeleteCompany";
 
 type Props = {
   params: Promise<{
@@ -17,9 +16,8 @@ const CompanyEditPage = async (props: Props) => {
     return <div>No Company Found</div>;
   }
   return (
-    <div className="space-y-2">
+    <div>
       <CompanyForm />
-      <DeleteCompany id={company.id} />
     </div>
   );
 };

@@ -10,7 +10,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Plus } from "lucide-react";
 import {
   useCreateSchedule,
   useUpdateSchedule,
@@ -23,12 +22,15 @@ import {
 } from "@/lib/constants";
 import AlertConfirmation from "@/components/alert-confirmation";
 import { toast } from "sonner";
-import { Textarea } from "@/components/ui/textarea";
 import { useTranslations } from "next-intl";
+import ScheduleTypeSelector from "./schedule-type-selector";
+import Link from "next/link";
+import ToastLinkMessage from "@/components/toast-link-message";
 
 type CreateScheduleProps = {
   children: React.ReactNode;
   companyId: string;
+  locationId: string;
   user: {
     id: number;
     fullName: string;
@@ -38,19 +40,20 @@ type CreateScheduleProps = {
   onSuccess?: () => void;
   initialStartTime?: string;
   initialEndTime?: string;
-  initialNotes?: string;
+  initialScheduleType?: string;
 };
 
 export const UpsertSchedule = ({
   children,
   companyId,
+  locationId,
   user,
   selectedDate,
   scheduleId,
   onSuccess,
   initialStartTime,
   initialEndTime,
-  initialNotes,
+  initialScheduleType,
 }: CreateScheduleProps) => {
   const [open, setOpen] = useState(false);
   const t = useTranslations("Schedule");
@@ -62,7 +65,9 @@ export const UpsertSchedule = ({
     initialEndTime || DEFAULT_SCHEDULE_END_TIME,
   );
 
-  const [notes, setNotes] = useState(initialNotes || "");
+  const [scheduleType, setscheduleType] = useState(
+    initialScheduleType || "work_day",
+  );
 
   const createSchedule = useCreateSchedule();
   const updateSchedule = scheduleId ? useUpdateSchedule(scheduleId) : null;
@@ -77,19 +82,32 @@ export const UpsertSchedule = ({
       start_time: startTime,
       end_time: endTime,
       company_id: parseInt(companyId),
-      notes: notes,
+      location_id: parseInt(locationId),
+      schedule_type: scheduleType,
     };
 
-    if (scheduleId && updateSchedule) {
-      await updateSchedule.mutateAsync(scheduleData);
-    } else {
-      await createSchedule.mutateAsync(scheduleData);
+    try {
+      if (scheduleId && updateSchedule) {
+        await updateSchedule.mutateAsync(scheduleData);
+      } else {
+        await createSchedule.mutateAsync(scheduleData);
+      }
+
+      setOpen(false);
+      onSuccess?.();
+    } catch (error: any) {
+      toast.error(
+        <ToastLinkMessage
+          message={error.message || "something went wrong"}
+          url={error.data.url || "#"}
+        />,
+        {
+          duration: 10000,
+          className: "min-w-[300px]",
+        },
+      );
     }
-
-    setOpen(false);
-    onSuccess?.();
   };
-
   const handleDelete = async () => {
     if (scheduleId && destroySchedule) {
       await destroySchedule.mutateAsync(scheduleId);
@@ -129,12 +147,10 @@ export const UpsertSchedule = ({
           </div>
 
           <div>
-            <label className="text-sm font-medium">{t("note")}</label>
-            <Textarea
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              placeholder={t("notePlaceholder")}
-              className="resize-none"
+            <label className="text-sm font-medium">{t("scheduleType")}</label>
+            <ScheduleTypeSelector
+              value={scheduleType}
+              handleChange={setscheduleType}
             />
           </div>
 

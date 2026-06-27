@@ -94,6 +94,15 @@ class ApplicationController < ActionController::API
     render_error(message || 'Forbidden', :forbidden)
   end
 
+  def render_dublicate(message, url, status = :conflict)
+    render json: {
+      error: true,
+      message: message,
+      url: url,
+      code: 'DUPLICATE_SCHEDULE'
+    }, status: status
+  end
+
   def serialize_collection(collection, serializer)
     ActiveModelSerializers::SerializableResource.new(
       collection,

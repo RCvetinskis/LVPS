@@ -35,6 +35,8 @@ Rails.application.routes.draw do
           get :company_schedules
           post :export_to_xlsx
           post :create_monthly_schedule
+          delete :destroy_schedules
+          get :schedule_types
         end
       end
 
@@ -45,6 +47,9 @@ Rails.application.routes.draw do
         member do
           get :company_employees
         end
+      end
+
+      resources :locations do
       end
 
       namespace :permissions do

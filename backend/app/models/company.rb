@@ -4,4 +4,11 @@ class Company < ApplicationRecord
   has_many :schedules, dependent: :destroy
   has_many :user_work_shift_patterns
   has_many :pattern_users, through: :user_work_shift_patterns, source: :user
+  has_many :locations, dependent: :destroy
+
+  validates :name, presence: true
+
+  def primary_location
+    locations.find_by(primary: true) || locations.first
+  end
 end

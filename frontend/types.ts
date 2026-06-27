@@ -39,11 +39,12 @@ export type TCompanyPermissions = {
 export type TSchedule = {
   id: number;
   company_id: number;
+  location_id: number | null;
   start_time: string;
   end_time: string;
   work_date: string;
   hours_worked?: number;
-  notes?: string;
+  schedule_type?: string;
   user_data: {
     name: string;
     surname: string;
@@ -60,3 +61,39 @@ export type TUserWorkShiftPattern = {
   off_days: number;
   work_days: number;
 } & TCrudDate;
+
+export type TLabelValue = {
+  label: string;
+  value: string;
+};
+
+export type TLocation = {
+  id: number;
+  company_id: number;
+  name: string;
+  address: string;
+
+  active: boolean;
+  primary_location: boolean;
+
+  postal_code?: string;
+  phone?: string;
+  country?: string;
+  email?: string;
+
+  city?: string;
+  notes?: string;
+} & TCrudDate;
+export class ApiError extends Error {
+  data: any;
+  status: number;
+  errors?: Record<string, string[]>;
+
+  constructor(message: string, data?: any, status?: number) {
+    super(message);
+    this.name = "ApiError";
+    this.data = data;
+    this.status = status || 500;
+    this.errors = data?.errors;
+  }
+}

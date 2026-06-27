@@ -2,15 +2,19 @@ module Services
   module Schedules
     class GenerateMonthlySchedule < ApplicationService
       STANDARD_DAILY_HOURS = 8
-      def initialize(company_id, user_id, date_range, region = 'gb')
+      def initialize(company_id, location_id, user_id, date_range, region = 'gb')
         super()
         @company_id = company_id
+        @location_id = location_id
         @user_id = user_id
         @date_range = date_range
         @region = region
       end
 
       def call
+        validation_error = validations
+        return validation_error if validation_error
+
         schedules = generate_work_days
         handle_success(schedules)
       rescue ActiveRecord::RecordInvalid => e
@@ -19,10 +23,22 @@ module Services
 
       private
 
-      attr_reader :company_id, :user_id, :date_range, :region
+      attr_reader :company_id, :location_id, :user_id, :date_range, :region
 
       def pattern
         @pattern ||= UserWorkShiftPattern.for_user(user_id)
+      end
+
+      def validations
+        return handle_error(I18n.t('schedules.errors.missing_work_pattern')) unless pattern
+
+        unless date_range.is_a?(Range) && date_range.first.present? && date_range.last.present?
+          return handle_error(
+            I18n.t('schedules.errors.invalid_date_range')
+          )
+        end
+
+        nil
       end
 
       def rotating_shift?
@@ -64,6 +80,7 @@ module Services
       def existing_schedules
         @existing_schedules ||= Schedule.where(
           company_id: company_id,
+          location_id: location_id,
           work_date: date_range.begin..date_range.end
         ).to_a
       end
@@ -204,6 +221,7 @@ module Services
 
         Schedule.where(
           company_id: company_id,
+          location_id: location_id,
           user_id: user_id,
           work_date: date_range.begin..date_range.end
         )
@@ -233,6 +251,7 @@ module Services
 
         Schedule.create!(
           company_id: company_id,
+          location_id: location_id,
           user_id: user_id,
           work_date: date,
           start_time: start_time,

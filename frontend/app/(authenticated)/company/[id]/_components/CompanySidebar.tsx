@@ -14,11 +14,7 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { useCompanyStore } from "@/stores/company-store";
-import {
-  CalendarRange,
-  GalleryVerticalEnd,
-  PersonStanding,
-} from "lucide-react";
+import { Building2, CalendarRange, PersonStanding } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -41,6 +37,7 @@ const CompanySidebar = () => {
         title: t("manageStaff"),
         url: "#",
         icon: <PersonStanding />,
+        permission: permissions?.view,
         items: [
           {
             title: t("employees"),
@@ -54,11 +51,18 @@ const CompanySidebar = () => {
           },
         ],
       },
+
       {
-        title: t("schedule"),
-        url: `${companyBaseUrl}/schedule`,
-        icon: <CalendarRange />,
+        title: t("locations"),
+        url: `${companyBaseUrl}/locations`,
         permission: permissions?.view,
+        items: [
+          {
+            title: t("createLocation"),
+            url: `${companyBaseUrl}/locations/add`,
+            permission: permissions?.view,
+          },
+        ],
       },
     ],
   };
@@ -71,7 +75,7 @@ const CompanySidebar = () => {
             <SidebarMenuButton size="lg" asChild>
               <Link href={companyBaseUrl}>
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                  <GalleryVerticalEnd className="size-4" />
+                  <Building2 className="size-4" />
                 </div>
                 <div className="flex flex-col gap-0.5 leading-none">
                   <span className="font-medium">{company.name}</span>

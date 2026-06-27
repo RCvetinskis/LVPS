@@ -18,12 +18,20 @@ import { DISPLAY_MOBILE_TABLE_ROWS } from "@/lib/constants";
 
 type Props = {
   companyId: string;
+  locationId: string;
 };
 
-const TableContainer = ({ companyId }: Props) => {
+const TableContainer = ({ companyId, locationId }: Props) => {
   const { dateRange } = useDateRangeStore();
-  const { schedules, users, isLoading, isError, error, refetch } =
-    useSchedulePageData(companyId, dateRange);
+  const {
+    schedules,
+    users,
+    scheduleTypes,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useSchedulePageData(companyId, locationId, dateRange);
   const { locale } = useCurrentUserStore();
   const t = useTranslations("Schedule");
   const isMobile = useIsMobile();
@@ -48,7 +56,7 @@ const TableContainer = ({ companyId }: Props) => {
             end: schedule.end_time,
             hoursWorked: schedule.hours_worked,
             scheduleId: schedule.id,
-            notes: schedule.notes,
+            schedule_type: schedule.schedule_type,
           };
         });
 
@@ -97,10 +105,18 @@ const TableContainer = ({ companyId }: Props) => {
 
   const columns = useMemo(
     () => [
-      ...baseColumns(mobileDates, t, companyId, refetch),
-      ...getDayColumns(mobileDates, companyId, refetch, locale, t),
+      ...baseColumns(mobileDates, t, companyId, locationId, refetch),
+      ...getDayColumns(
+        mobileDates,
+        companyId,
+        locationId,
+        refetch,
+        locale,
+        t,
+        scheduleTypes,
+      ),
     ],
-    [mobileDates, companyId, refetch, locale, t],
+    [mobileDates, companyId, locationId, refetch, locale, t],
   );
 
   if (isLoading) {
@@ -138,6 +154,7 @@ const TableContainer = ({ companyId }: Props) => {
             {format(mobileDates[0]?.originalDay, "MMM d")} -{" "}
             {format(mobileDates[mobileDates.length - 1]?.originalDay, "MMM d")}
           </span>
+          :
           <Button
             variant="outline"
             size="sm"

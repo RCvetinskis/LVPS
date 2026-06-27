@@ -3,9 +3,10 @@ require 'caxlsx'
 module Services
   module Schedules
     class ExportScheduleToXlsx < ApplicationService
-      def initialize(company, schedule_ids, range_date, locale)
+      def initialize(company, location, schedule_ids, range_date, locale)
         super()
         @company = company
+        @location = location
         @schedule_ids = schedule_ids
         @range_date = range_date
         @locale = locale
@@ -37,7 +38,7 @@ module Services
           sheet.merge_cells("A2:#{column_letter(total_columns)}2")
           sheet.rows.last.style = @title_style
 
-          sheet.add_row [@company.name]
+          sheet.add_row ["#{@company.name}, #{@location.address}"]
           sheet.merge_cells("A3:#{column_letter(total_columns)}3")
           sheet.rows.last.style = @title_style
 
@@ -185,6 +186,7 @@ module Services
         @schedules ||= @company.schedules
                                .where(id: @schedule_ids)
                                .includes(:user)
+                               .order(:user_id)
       end
 
       def date_range
@@ -210,8 +212,9 @@ module Services
         start_time = schedule.start_time.in_time_zone(Time.zone)
         end_time = schedule.end_time.in_time_zone(Time.zone)
         hours = worked_hours(schedule)
+        schedule_type_short = I18n.t("schedule_types.short.#{schedule.schedule_type}")
 
-        "#{start_time.strftime('%H:%M')}\n#{end_time.strftime('%H:%M')}\n#{hours}h"
+        "#{start_time.strftime('%H:%M')}\n#{end_time.strftime('%H:%M')}\n #{schedule_type_short}#{hours}"
       end
 
       def worked_hours(schedule)
@@ -226,7 +229,7 @@ module Services
           total = schedules.select { |s| s.work_date == date }
                            .sum { |s| worked_hours(s) }
 
-          total.zero? ? '' : "#{total}h"
+          total.zero? ? '' : total
         end
       end
 

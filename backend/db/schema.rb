@@ -10,13 +10,32 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_06_15_164249) do
+ActiveRecord::Schema[7.0].define(version: 2026_06_26_195440) do
   create_table "companies", force: :cascade do |t|
     t.string "name", null: false
     t.string "location", null: false
     t.text "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "locations", force: :cascade do |t|
+    t.integer "company_id", null: false
+    t.string "name", null: false
+    t.string "address"
+    t.string "city"
+    t.string "country"
+    t.string "postal_code"
+    t.string "phone"
+    t.string "email"
+    t.boolean "active", default: true
+    t.boolean "primary_location", default: false
+    t.text "notes"
+    t.datetime "created_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.datetime "updated_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.index ["company_id", "name"], name: "index_locations_on_company_id_and_name", unique: true
+    t.index ["company_id", "primary_location"], name: "index_locations_on_company_id_and_primary_location", unique: true, where: "primary_location = true"
+    t.index ["company_id"], name: "index_locations_on_company_id"
   end
 
   create_table "permissions", force: :cascade do |t|
@@ -52,14 +71,17 @@ ActiveRecord::Schema[7.0].define(version: 2026_06_15_164249) do
     t.date "work_date", null: false
     t.decimal "hours_worked", precision: 5, scale: 2
     t.string "status"
-    t.text "notes"
+    t.text "schedule_type", default: "work_day"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "start_time"
     t.datetime "end_time"
+    t.integer "location_id"
     t.index ["company_id", "user_id", "work_date"], name: "index_schedules_on_company_id_and_user_id_and_work_date"
     t.index ["company_id"], name: "index_schedules_on_company_id"
+    t.index ["location_id"], name: "index_schedules_on_location_id"
     t.index ["user_id", "status"], name: "index_schedules_on_user_id_and_status"
+    t.index ["user_id", "work_date", "location_id"], name: "index_schedules_on_user_work_date_location"
     t.index ["user_id"], name: "index_schedules_on_user_id"
     t.index ["work_date"], name: "index_schedules_on_work_date"
     t.index ["work_date"], name: "index_schedules_on_work_date_and_start_time_and_end_time"
@@ -115,9 +137,11 @@ ActiveRecord::Schema[7.0].define(version: 2026_06_15_164249) do
     t.index ["role_id"], name: "index_users_on_role_id"
   end
 
+  add_foreign_key "locations", "companies"
   add_foreign_key "role_permissions", "permissions"
   add_foreign_key "role_permissions", "roles"
   add_foreign_key "schedules", "companies"
+  add_foreign_key "schedules", "locations"
   add_foreign_key "schedules", "users"
   add_foreign_key "user_companies", "companies"
   add_foreign_key "user_companies", "users"

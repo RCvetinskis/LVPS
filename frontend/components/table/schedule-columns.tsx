@@ -2,12 +2,15 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { enUS, lt } from "date-fns/locale";
-import { UpsertSchedule } from "@/app/(authenticated)/company/[id]/schedule/_components/upsert-schedule";
+
 import ToolTipHover from "../tool-tip-hover";
 import { Button } from "../ui/button";
-import { Plus, PlusCircleIcon } from "lucide-react";
-import { useCreateMonthlySchedule } from "@/hooks/use-schedule-data";
-import { useDateRangeStore } from "@/stores/date-range-store";
+import { Plus } from "lucide-react";
+
+import { TLabelValue } from "@/types";
+import CreateMonthlySchedule from "@/app/(authenticated)/company/[id]/locations/[locationId]/schedule/_components/create-monthly-schedule";
+import DeleteSchedules from "@/app/(authenticated)/company/[id]/locations/[locationId]/schedule/_components/delete-schedules";
+import { UpsertSchedule } from "@/app/(authenticated)/company/[id]/locations/[locationId]/schedule/_components/upsert-schedule";
 
 export type TTableSchedule = {
   id: number;
@@ -32,7 +35,7 @@ type TShift = {
   end: string;
   scheduleId: number;
   hoursWorked?: number;
-  notes?: string;
+  schedule_type?: string;
   id?: number;
 };
 
@@ -73,50 +76,11 @@ const formatDayName = (date: Date, locale: string) => {
   return format(date, "EEE", { locale: dateFnsLocale });
 };
 
-// Separate component for the create monthly schedule button
-const CreateMonthlyScheduleButton = ({
-  companyId,
-  userId,
-  refetch,
-}: {
-  companyId: string;
-  userId: number;
-  refetch: () => void;
-}) => {
-  const { dateRange } = useDateRangeStore();
-  const createMonthlySchedule = useCreateMonthlySchedule();
-
-  const handleClick = async () => {
-    if (!dateRange?.from || !dateRange?.to) return;
-
-    const body = {
-      company_id: companyId,
-      user_id: userId,
-      date_range: {
-        from: format(dateRange.from, "yyyy-MM-dd"),
-        to: format(dateRange.to, "yyyy-MM-dd"),
-      },
-    };
-
-    await createMonthlySchedule.mutateAsync(body);
-    refetch();
-  };
-
-  return (
-    <Button
-      disabled={createMonthlySchedule.isPending}
-      size={"icon-xs"}
-      onClick={handleClick}
-    >
-      <PlusCircleIcon />
-    </Button>
-  );
-};
-
 export const baseColumns = (
   selectedDays: SelectedDays[],
   t: (key: string) => string,
   companyId: string,
+  locationId: string,
   refetch: () => void,
 ): TBaseColumns => [
   {
@@ -174,11 +138,19 @@ export const baseColumns = (
           {!selectedDays.length ? (
             "-"
           ) : (
-            <CreateMonthlyScheduleButton
-              companyId={companyId}
-              userId={row.original.user.id}
-              refetch={refetch}
-            />
+            <div>
+              <CreateMonthlySchedule
+                companyId={companyId}
+                locationId={locationId}
+                userId={row.original.user.id}
+                refetch={refetch}
+              />
+              <DeleteSchedules
+                companyId={companyId}
+                userId={row.original.user.id}
+                refetch={refetch}
+              />
+            </div>
           )}
         </div>
       );
@@ -191,9 +163,11 @@ export const baseColumns = (
 export const getDayColumns = (
   selectedDays: SelectedDays[],
   companyId: string,
+  locationId: string,
   refetch: () => void,
   locale: string,
   t: (key: string) => string,
+  scheduleTypes: TLabelValue[],
 ): TDayColumns => {
   return selectedDays.map((date) => {
     const key = format(date.originalDay, "yyyy-MM-dd");
@@ -219,6 +193,7 @@ export const getDayColumns = (
               <div className="flex items-center justify-center">
                 <UpsertSchedule
                   companyId={companyId}
+                  locationId={locationId}
                   user={row.original.user}
                   selectedDate={date.originalDay}
                   onSuccess={refetch}
@@ -231,29 +206,38 @@ export const getDayColumns = (
             </ToolTipHover>
           );
         }
-
+        const currentScheduleType = scheduleTypes?.find(
+          (item) => item.value === shift.schedule_type,
+        );
+        const scheduleTypeShortCut =
+          currentScheduleType?.value === "work_day"
+            ? ""
+            : currentScheduleType?.label?.[0] || "";
         return (
           <ToolTipHover text={t("editShift")}>
             <div className="flex items-center justify-center">
               <UpsertSchedule
                 companyId={companyId}
+                locationId={locationId}
                 user={row.original.user}
                 selectedDate={date.originalDay}
                 onSuccess={refetch}
                 scheduleId={shift.scheduleId}
                 initialStartTime={shift.start}
                 initialEndTime={shift.end}
-                initialNotes={shift.notes}
+                initialScheduleType={shift.schedule_type}
               >
                 <div className="text-center space-y-1 cursor-pointer">
                   <div className="whitespace-nowrap">{shift.start}</div>
                   <div className="whitespace-nowrap">{shift.end}</div>
                   {shift.hoursWorked && (
                     <div className="border-t pt-1 text-gray-600">
+                      <span className="whitespace-nowrap capitalize">
+                        {scheduleTypeShortCut}
+                      </span>
                       <span className="whitespace-nowrap">
                         {shift.hoursWorked}
                       </span>
-                      <span className="whitespace-nowrap">{t("hours")}</span>
                     </div>
                   )}
                 </div>

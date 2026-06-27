@@ -1,3 +1,4 @@
+import { ApiError } from "@/types";
 import axios from "axios";
 import Cookies from "js-cookie";
 export const api = axios.create({
@@ -41,13 +42,11 @@ authenticatedApi.interceptors.request.use(
     return config;
   },
   (error) => {
+    const responseData = error?.response?.data;
     const message =
-      error?.response?.data?.message ||
-      error?.response?.data?.error?.message ||
-      error.message ||
-      "Unknown error";
-
-    return Promise.reject(new Error(message));
+      responseData?.message || error?.message || "An error occurred";
+    const status = error?.response?.status;
+    return Promise.reject(new ApiError(message, responseData, status));
   },
 );
 
@@ -56,12 +55,10 @@ authenticatedApi.interceptors.response.use(
     return response;
   },
   (error) => {
+    const responseData = error?.response?.data;
     const message =
-      error?.response?.data?.message ||
-      error?.response?.data?.error?.message ||
-      error.message ||
-      "Unknown error";
-
-    return Promise.reject(new Error(message));
+      responseData?.message || error?.message || "An error occurred";
+    const status = error?.response?.status;
+    return Promise.reject(new ApiError(message, responseData, status));
   },
 );
