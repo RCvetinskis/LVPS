@@ -19,8 +19,7 @@ const EmployeeEditPage = async (props: Props) => {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <EditEmployee employee={user} />
-
+      <EditEmployee employee={user} companyId={params.id} />
       <EditEmployeeWorkShift
         employee={user}
         companyId={params.id}

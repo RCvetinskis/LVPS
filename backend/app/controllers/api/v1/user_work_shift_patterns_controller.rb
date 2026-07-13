@@ -15,6 +15,8 @@ module Api
       end
 
       def upsert
+        return unless authorize!('manage_company_users', pattern_params[:company_id])
+
         pattern = @user.user_work_shift_pattern
 
         if pattern.present?

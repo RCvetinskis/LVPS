@@ -49,6 +49,7 @@ lt:
     delete: "Ištrinti"
     edit: "Redaguoti"
     view: "Peržiūrėti"
+    unauthorized: "Neteisėta operacija"
   activerecord:
     attributes:
       roles:
