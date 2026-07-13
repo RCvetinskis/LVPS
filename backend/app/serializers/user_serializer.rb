@@ -6,7 +6,7 @@ class UserSerializer < ActiveModel::Serializer
   end
 
   def role
-    I18n.t("activerecord.attributes.roles.#{object.role.name}")
+    object.role? ? I18n.t("activerecord.attributes.roles.#{object.role.name}") : nil
   end
 
   def status

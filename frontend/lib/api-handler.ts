@@ -2,7 +2,7 @@ import { ApiError } from "@/types";
 import axios from "axios";
 import Cookies from "js-cookie";
 export const api = axios.create({
-  baseURL: "http://localhost:3001/api/v1",
+  baseURL: process.env.NEXT_PUBLIC_API_URL,
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",
@@ -23,7 +23,7 @@ api.interceptors.response.use(
 );
 
 export const authenticatedApi = axios.create({
-  baseURL: "http://localhost:3001/api/v1",
+  baseURL: process.env.NEXT_PUBLIC_API_URL,
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",
