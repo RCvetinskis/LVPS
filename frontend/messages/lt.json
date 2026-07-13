@@ -64,7 +64,8 @@
         "addedToSystemAt": "Pridėtas į sistemą:",
         "role": "Rolė:",
         "status": "Būsena:",
-        "editButton": "Redaguoti darbuotoją"
+        "editButton": "Redaguoti darbuotoją",
+        "saveButton": "Išsaugoti"
     },
     "Export": {
         "noSchedules": "Nėra grafikų eksportavimui",

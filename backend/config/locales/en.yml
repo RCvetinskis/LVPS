@@ -80,6 +80,7 @@ en:
     delete: "Delete"
     edit: "Edit"
     view: "View"
+    unauthorized: "Unauthorized"
   activerecord:
     attributes:
       roles:

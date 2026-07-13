@@ -18,7 +18,7 @@ Rails.application.routes.draw do
 
         resource :locales, only: [:update]
 
-        resources :data, only: [:show]
+        resources :data, only: %i[show update]
       end
 
       resources :roles

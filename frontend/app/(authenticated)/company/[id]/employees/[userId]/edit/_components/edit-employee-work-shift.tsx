@@ -73,7 +73,7 @@ const EditEmployeeWorkShift = ({
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)}>
-      <Card>
+      <Card className="h-full">
         <CardHeader>
           <CardTitle>{t("editShiftTitle")}</CardTitle>
         </CardHeader>
@@ -196,7 +196,7 @@ const EditEmployeeWorkShift = ({
             />
           </FieldGroup>
         </CardContent>
-        <CardFooter>
+        <CardFooter className="mt-auto">
           <FieldGroup>
             <Button disabled={loading} type="submit">
               {t("saveButton")}

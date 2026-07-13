@@ -64,7 +64,8 @@
         "addedToSystemAt": "Added to system at:",
         "role": "Role:",
         "status": "Status:",
-        "editButton": "Edit employee"
+        "editButton": "Edit employee",
+        "saveButton": "Save"
     },
     "Export": {
         "noSchedules": "No schedules available to export",
