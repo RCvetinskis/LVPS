@@ -10,7 +10,6 @@ import {
   updateSchedule,
 } from "@/front-requests/schedule-requests";
 import { getCompanyEmployees } from "@/front-requests/company-requests";
-import { toast } from "sonner";
 
 export const useCompanySchedules = (
   companyId: string,

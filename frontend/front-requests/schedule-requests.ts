@@ -17,20 +17,22 @@ export const getCompanySchedules = async (
   dateRange?: { from?: Date; to?: Date },
 ): Promise<TSchedule[]> => {
   try {
+    const params: Record<string, string> = {
+      company_id,
+      location_id,
+    };
+
+    if (dateRange?.from) {
+      params.from = format(dateRange.from, "yyyy-MM-dd");
+    }
+    if (dateRange?.to) {
+      params.to = format(dateRange.to, "yyyy-MM-dd");
+    }
+
     const { data } = await authenticatedApi.get("schedules/company_schedules", {
-      params: {
-        company_id,
-        location_id,
-        from: dateRange?.from,
-        to: dateRange?.to,
-      },
-      paramsSerializer: (params) => {
-        const filteredParams = Object.fromEntries(
-          Object.entries(params).filter(([_, value]) => value !== undefined),
-        );
-        return new URLSearchParams(filteredParams).toString();
-      },
+      params,
     });
+
     return data.data;
   } catch (error: any) {
     toast.error(error.message || "Something went wrong");
