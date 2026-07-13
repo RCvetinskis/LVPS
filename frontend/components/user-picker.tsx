@@ -11,8 +11,7 @@ import {
 } from "@/components/ui/command";
 import { useState, useEffect } from "react";
 import { Input } from "./ui/input";
-import { useScheduleStore } from "@/stores/date-range-store";
-import { useUserStore } from "@/stores/user-store";
+import { useUsersStore } from "@/stores/user-store";
 
 type Props = {
   value?: number;
@@ -22,7 +21,7 @@ type Props = {
 const UserPicker = ({ value, onChange }: Props) => {
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
-  const { users, getUserName } = useUserStore();
+  const { users, getUserName } = useUsersStore();
 
   useEffect(() => {
     if (value) {
