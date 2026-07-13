@@ -1,34 +1,56 @@
 import { authenticatedApi } from "@/lib/api-handler";
-import { TSchedule } from "@/types";
+import { TLabelValue, TSchedule } from "@/types";
 import { format } from "date-fns";
 
 import { toast } from "sonner";
-
+export type TDestroySchedulesParams = {
+  company_id: number;
+  user_id: number;
+  date_range: {
+    from: string;
+    to: string;
+  };
+};
 export const getCompanySchedules = async (
-  id: string,
+  company_id: string,
+  location_id: string,
   dateRange?: { from?: Date; to?: Date },
 ): Promise<TSchedule[]> => {
   try {
+    const params: Record<string, string> = {
+      company_id,
+      location_id,
+    };
+
+    if (dateRange?.from) {
+      params.from = format(dateRange.from, "yyyy-MM-dd");
+    }
+    if (dateRange?.to) {
+      params.to = format(dateRange.to, "yyyy-MM-dd");
+    }
+
     const { data } = await authenticatedApi.get("schedules/company_schedules", {
-      params: {
-        company_id: id,
-        from: dateRange?.from,
-        to: dateRange?.to,
-      },
-      paramsSerializer: (params) => {
-        const filteredParams = Object.fromEntries(
-          Object.entries(params).filter(([_, value]) => value !== undefined),
-        );
-        return new URLSearchParams(filteredParams).toString();
-      },
+      params,
     });
+
     return data.data;
   } catch (error: any) {
     toast.error(error.message || "Something went wrong");
     return [];
   }
 };
-export const createSchedule = async (body: any): Promise<TSchedule | null> => {
+
+export const getScheduleTypes = async (): Promise<TLabelValue[]> => {
+  try {
+    const { data } = await authenticatedApi.get("schedules/schedule_types");
+    return data.data;
+  } catch (error: any) {
+    toast.error(error.message || "Something went wrong");
+    return [];
+  }
+};
+
+export const createSchedule = async (body: any): Promise<TSchedule> => {
   try {
     const { data } = await authenticatedApi.post("schedules", {
       schedule: {
@@ -37,15 +59,38 @@ export const createSchedule = async (body: any): Promise<TSchedule | null> => {
         work_date: body.work_date,
         start_time: body.start_time,
         end_time: body.end_time,
-        notes: body.notes,
+        schedule_type: body.schedule_type,
+        location_id: body.location_id,
       },
     });
 
     toast.success(data.message);
     return data.data;
   } catch (error: any) {
+    throw error;
+  }
+};
+export const createMonthlySchedule = async (
+  body: any,
+): Promise<TSchedule[] | []> => {
+  try {
+    const { data } = await authenticatedApi.post(
+      "schedules/create_monthly_schedule",
+      {
+        monthly_schedule: {
+          company_id: body.company_id,
+          location_id: body.location_id,
+          user_id: body.user_id,
+          date_range: body.date_range,
+        },
+      },
+    );
+
+    toast.success(data.message);
+    return data.data;
+  } catch (error: any) {
     toast.error(error.message || "Something went wrong");
-    return null;
+    return [];
   }
 };
 export const updateSchedule = async ({
@@ -63,7 +108,8 @@ export const updateSchedule = async ({
         work_date: body.work_date,
         start_time: body.start_time,
         end_time: body.end_time,
-        notes: body.notes,
+        schedule_type: body.schedule_type,
+        location_id: body.location_id,
       },
     });
 
@@ -92,10 +138,12 @@ export const destroySchedule = async (
 export const exportScheduleXlsx = async ({
   schedule_ids,
   companyId,
+  locationId,
   dateRange,
 }: {
   schedule_ids: number[];
   companyId: string;
+  locationId: string;
   dateRange: { from: Date; to: Date };
 }) => {
   try {
@@ -103,6 +151,7 @@ export const exportScheduleXlsx = async ({
       "schedules/export_to_xlsx",
       {
         company_id: companyId,
+        location_id: locationId,
         schedule_ids,
         date_range: {
           from: format(dateRange.from, "yyyy-MM-dd"),
@@ -118,5 +167,28 @@ export const exportScheduleXlsx = async ({
   } catch (error: any) {
     toast.error(error.message || "Something went wrong");
     return null;
+  }
+};
+
+export const destroySchedulesByPeriod = async (
+  params: TDestroySchedulesParams,
+): Promise<boolean> => {
+  try {
+    const { data } = await authenticatedApi.delete(
+      "schedules/destroy_schedules",
+      {
+        data: {
+          monthly_schedule: params,
+        },
+      },
+    );
+
+    toast.success(data.message);
+    return true;
+  } catch (error: any) {
+    toast.error(
+      error.response?.data?.message || error.message || "Something went wrong",
+    );
+    return false;
   }
 };

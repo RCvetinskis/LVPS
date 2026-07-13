@@ -3,7 +3,10 @@
         "myCompanies": "My Companies",
         "noCompaniesFound": "No companies found",
         "location": "Location",
-        "managingSince": "Managing since"
+        "managingSince": "Managing since",
+        "description": "Description",
+        "edit": "Edit",
+        "delete": "Delete"
     },
     "Navigation": {
         "language": "Language",
@@ -18,7 +21,9 @@
         "manageStaff": "Manage Staff",
         "employees": "Employees",
         "addEmployee": "Add Employee",
-        "schedule": "Schedule"
+        "schedule": "Schedule",
+        "locations": "Locations",
+        "createLocation": "Create Location"
     },
     "Schedule": {
         "employee": "Employee",
@@ -27,7 +32,7 @@
         "editShift": "Edit shift",
         "hours": "hours",
         "date": "Date",
-        "note": "Note",
+        "scheduleType": "Schedule Type",
         "notePlaceholder": "Leave a note",
         "startTime": "Start Time",
         "endTime": "End Time",
@@ -39,7 +44,10 @@
         "deleteConfirmationDescription": "This action cannot be undone.",
         "scheduleNotFound": "Schedule not found",
         "createButton": "Create Schedule",
-        "updateButton": "Update Schedule"
+        "updateButton": "Update Schedule",
+        "createMonthlySchedule": "Create Monthly Schedule",
+        "next": "Next",
+        "previous": "Previous"
     },
     "Employee": {
         "title": "Add new employee",
@@ -79,5 +87,59 @@
             "description": "Create an account to get started",
             "toggleButton": "Sign In"
         }
+    },
+    "EmployeeShiftPatterns": {
+        "editShiftTitle": " Edit Shift",
+        "inputName": "Name",
+        "inputNamePlaceHolder": "Full Time",
+        "inputHours": "Hours",
+        "inputWorkDays": "Work Days",
+        "inputOffDays": "Off Days",
+        "saveButton": "Save"
+    },
+    "Calendar": {
+        "selectedRange": "Selected Range",
+        "holidaysInRange": "Holidays in selected range",
+        "shortenedDay": "Shortened Day",
+        "address": "Address"
+    },
+    "Location": {
+        "default": "Default",
+        "active": "Active",
+        "inactive": "Inactive",
+        "locationId": "Location #{id}",
+        "address": "Address",
+        "notes": "Notes",
+        "createdAt": "Created",
+        "updatedAt": "Updated",
+        "setDefault": "Set Default",
+        "edit": "Edit",
+        "delete": "Delete",
+        "createTitle": "Create Location",
+        "editTitle": "Edit Location",
+        "createDescription": "Fill in the details to create a new location",
+        "editDescription": "Edit location details",
+        "name": "Name",
+        "namePlaceholder": "Vilnius Office",
+        "addressPlaceholder": "Gedimino pr. 1",
+        "city": "City",
+        "cityPlaceholder": "Vilnius",
+        "country": "Country",
+        "countryPlaceholder": "Lithuania",
+        "postalCode": "Postal Code",
+        "postalCodePlaceholder": "LT-01100",
+        "phone": "Phone",
+        "phonePlaceholder": "+370 5 123 4567",
+        "email": "Email",
+        "emailPlaceholder": "vilnius@company.com",
+        "notesPlaceholder": "Additional information about this location",
+        "defaultLocation": "Set as Default Location",
+        "cancel": "Cancel",
+        "createButton": "Create Location",
+        "saveButton": "Save Changes",
+        "creating": "Creating...",
+        "saving": "Saving...",
+        "activeBadge": "Active",
+        "inactiveBadge": "Inactive"
     }
 }

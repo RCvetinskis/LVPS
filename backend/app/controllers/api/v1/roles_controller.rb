@@ -1,6 +1,7 @@
 module Api
   module V1
     class RolesController < ApplicationController
+      before_action :authenticate_api_v1_user!
       before_action :set_role, only: %i[show update destroy]
 
       # GET /roles

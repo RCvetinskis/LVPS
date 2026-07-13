@@ -12,7 +12,6 @@ const today = new Date();
 const defaultFrom = startOfMonth(today);
 const defaultTo = endOfMonth(today);
 
-// Create a no-op storage for server-side
 const noopStorage = {
   getItem: () => null,
   setItem: () => {},

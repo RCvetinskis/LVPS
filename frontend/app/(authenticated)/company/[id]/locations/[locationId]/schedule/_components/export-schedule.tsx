@@ -11,14 +11,16 @@ import { useTranslations } from "next-intl";
 
 type Props = {
   companyId: string;
-  companyName?: string;
+  locationId: string;
 };
 
-const ExportSchedule = ({ companyId }: Props) => {
+const ExportSchedule = ({ companyId, locationId }: Props) => {
   const [isExporting, setIsExporting] = useState(false);
   const { dateRange } = useDateRangeStore();
   const { schedules, isLoading, isError, error } = useSchedulePageData(
     companyId,
+    locationId,
+
     dateRange,
   );
   const t = useTranslations("Export");
@@ -40,6 +42,7 @@ const ExportSchedule = ({ companyId }: Props) => {
     try {
       const data = await exportScheduleXlsx({
         companyId,
+        locationId,
         schedule_ids,
         dateRange: {
           from: dateRange.from,

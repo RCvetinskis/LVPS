@@ -131,6 +131,7 @@ GEM
       temple (>= 0.8.2)
       thor
       tilt
+    holidays (9.2.0)
     htmlentities (4.4.2)
     i18n (1.14.8)
       concurrent-ruby (~> 1.0)
@@ -309,6 +310,7 @@ DEPENDENCIES
   devise-jwt
   faker
   haml (~> 6.2)
+  holidays
   kaminari
   pry-rails
   puma (>= 5.0)

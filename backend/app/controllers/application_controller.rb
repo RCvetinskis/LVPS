@@ -1,6 +1,24 @@
 class ApplicationController < ActionController::API
+  LOCALE_TO_REGION_MAP = {
+    'lt' => 'lt',
+    'en' => 'gb',
+    'en-US' => 'us',
+    'en-GB' => 'gb',
+    'fr' => 'fr',
+    'de' => 'de',
+    'es' => 'es',
+    'pl' => 'pl',
+    'ru' => 'ru',
+    'lv' => 'lv',
+    'ee' => 'ee',
+    'fi' => 'fi',
+    'se' => 'se',
+    'no' => 'no',
+    'dk' => 'dk'
+  }.freeze
+
   before_action :configure_permitted_parameters, if: :devise_controller?
-  before_action :set_locale
+  before_action :set_locale, :set_region
 
   private
 
@@ -15,6 +33,10 @@ class ApplicationController < ActionController::API
     locale = I18n.default_locale unless I18n.available_locales.include?(locale.to_sym)
 
     I18n.locale = locale
+  end
+
+  def set_region
+    @region = LOCALE_TO_REGION_MAP[I18n.locale.to_s] || 'gb'
   end
 
   def pagination_dict(collection)
@@ -70,6 +92,15 @@ class ApplicationController < ActionController::API
 
   def render_forbidden(message = nil)
     render_error(message || 'Forbidden', :forbidden)
+  end
+
+  def render_dublicate(message, url, status = :conflict)
+    render json: {
+      error: true,
+      message: message,
+      url: url,
+      code: 'DUPLICATE_SCHEDULE'
+    }, status: status
   end
 
   def serialize_collection(collection, serializer)

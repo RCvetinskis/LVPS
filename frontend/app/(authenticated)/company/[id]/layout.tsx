@@ -1,4 +1,4 @@
-import { SidebarProvider } from "@/components/ui/sidebar";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import CompanySidebar from "./_components/CompanySidebar";
 import CompanyStoreInitializer from "@/hooks/company-store-initializer";
 import {
@@ -24,7 +24,10 @@ const CompanyLayout = async (props: Props) => {
     <SidebarProvider>
       <CompanyStoreInitializer company={company} permissions={permissions} />
       <CompanySidebar />
-      <main className="w-full">{props.children}</main>
+      <main className="min-w-0 flex-1 w-full overflow-hidden">
+        <SidebarTrigger className="fixed top-0 left-4 z-50" />
+        <div className="w-full max-w-full  px-4">{props.children}</div>
+      </main>
     </SidebarProvider>
   );
 };
