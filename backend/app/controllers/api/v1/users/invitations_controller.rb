@@ -20,8 +20,8 @@ module Api
 
               if result.success?
                 company = Company.find_by(id: invitation_params[:company_id])
-
-                UserMailer.invitation_mail(company, @user).deliver_now
+                # removed while not needed
+                # UserMailer.invitation_mail(company, @user).deliver_now
                 render_success(
                   serialize_resource(@user, UserSerializer),
                   I18n.t('user.invitations.sent', email: @user.email)
